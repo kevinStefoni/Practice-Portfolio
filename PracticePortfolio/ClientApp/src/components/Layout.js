@@ -1,27 +1,32 @@
 import React, { Component } from 'react';
 import { Container } from 'reactstrap';
 import { NavMenu } from './NavMenu';
-import './Layout.css'
+import './Layout.css';
 
 export class Layout extends Component {
-    static displayName = Layout.name;
-    static state = {
+    state = {
         isPushed: false
     };
 
-    pushRight = () => {
-        this.setState({ isPushed: true });
+    handlePushToggle = () => {
+        this.setState((prevState) => ({ isPushed: !prevState.isPushed }));
     };
 
-    pullLeft = () => {
+    handleCloseNav = () => {
         this.setState({ isPushed: false });
     };
 
     render() {
+        const { isPushed } = this.state;
+
         return (
             <div>
-                <NavMenu />
-                <Container tag="main" id="main">
+                <NavMenu
+                    isPushed={isPushed}
+                    onPushToggle={this.handlePushToggle}
+                    onCloseNav={this.handleCloseNav}
+                />
+                <Container tag="main" id="main" style={{ marginLeft: isPushed ? '250px' : '0' }}>
                     {this.props.children}
                 </Container>
             </div>
