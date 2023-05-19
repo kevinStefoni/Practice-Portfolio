@@ -1,0 +1,112 @@
+﻿
+
+
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #222432;
+    overflow-x: hidden;
+    padding-top: 60px;
+    transition: 0.5s;
+}
+    .sidenav.open {
+        width: 250px;
+    }
+
+    .sidenav a {
+        padding: 8px 8px 8px 32px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #DADAD0;
+        display: block;
+        transition: 0.3s;
+    }
+
+        .sidenav a:hover {
+            color: #818181;
+        }
+
+    .sidenav .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+    }
+
+#main {
+    transition: margin-left .5s;
+    padding: 20px;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {
+        padding-top: 15px;
+    }
+
+        .sidenav a {
+            font-size: 18px;
+        }
+}
+
+.hamburger-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+    .hamburger-button:hover .hamburger-icon,
+    .hamburger-button:hover .hamburger-icon::before,
+    .hamburger-button:hover .hamburger-icon::after {
+        background-color: #818181;
+    }
+
+.hamburger-icon {
+    display: block;
+    width: 30px;
+    height: 2px;
+    background-color: #ECECF1;
+    position: relative;
+}
+
+    .hamburger-icon::before,
+    .hamburger-icon::after {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-color: #ECECF1;
+        position: absolute;
+    }
+
+    .hamburger-icon::before {
+        top: -8px;
+    }
+
+    .hamburger-icon::after {
+        top: 8px;
+    }
+
+.close-nav-btn {
+    background-color: transparent;
+    color: #DADAD0;
+    border: none;
+    font-size: 50px;
+    font-weight: lighter;
+    position: relative;
+    top: -10%;
+    right: -80%;
+}
+
+.close-nav-btn:hover {
+    color: #818181;
+}
