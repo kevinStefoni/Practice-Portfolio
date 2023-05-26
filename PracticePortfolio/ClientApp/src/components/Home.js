@@ -28,7 +28,7 @@ export class Home extends Component {
     render() {
         return (
             <div>
-                <h1 class="timed-greeting">{this.state.greeting}</h1>
+                <h1 className="timed-greeting">{this.state.greeting}</h1>
             </div>
         );
     }

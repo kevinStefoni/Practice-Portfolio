@@ -4,7 +4,7 @@ import './NavMenu.css';
 
 export class NavMenu extends Component {
     handleCloseNav = () => {
-        this.props.onCloseNav(); // Call the onCloseNav callback function from props
+        this.props.onCloseNav();
     };
 
     render() {
@@ -17,8 +17,8 @@ export class NavMenu extends Component {
                         &times;
                     </button>
                     <Link to="/">Home</Link>
-                    <Link to="/counter">Counter</Link>
                     <Link to="/fetch-data">Weather</Link>
+                    <Link to="/singleton">Singleton</Link>
                 </div>
 
                 <button onClick={this.props.onPushToggle} className="hamburger-button">

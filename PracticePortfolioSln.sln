@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33712.159
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticePortfolio", "PracticePortfolio\PracticePortfolio.csproj", "{0AA2E783-1DEF-4FE3-B32E-EB530026C21B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PracticePortfolio", "PracticePortfolio\PracticePortfolio.csproj", "{0AA2E783-1DEF-4FE3-B32E-EB530026C21B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticePortfolioTests", "PracticePortfolioTests\PracticePortfolioTests.csproj", "{42B3562D-69B3-41BF-B21A-B0A86F18FA49}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0AA2E783-1DEF-4FE3-B32E-EB530026C21B} = {0AA2E783-1DEF-4FE3-B32E-EB530026C21B}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +20,10 @@ Global
 		{0AA2E783-1DEF-4FE3-B32E-EB530026C21B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AA2E783-1DEF-4FE3-B32E-EB530026C21B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AA2E783-1DEF-4FE3-B32E-EB530026C21B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42B3562D-69B3-41BF-B21A-B0A86F18FA49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42B3562D-69B3-41BF-B21A-B0A86F18FA49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42B3562D-69B3-41BF-B21A-B0A86F18FA49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42B3562D-69B3-41BF-B21A-B0A86F18FA49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
