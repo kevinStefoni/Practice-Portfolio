@@ -2,46 +2,32 @@
 import { CodeSnippet } from './CodeSnippet';
 
 export class Singleton extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            codeSnippet: '',
+        };
+    }
+
+    componentDidMount() {
+        this.fetchCodeSnippet();
+    }
+
+    fetchCodeSnippet = async () => {
+        try {
+            const response = await fetch('/Singleton.cs');
+            const codeContent = await response.text();
+            this.setState({ codeSnippet: codeContent });
+        } catch (error) {
+            this.setState({ codeSnippet: 'Unable to load code.' });
+        }
+    };
+
     render() {
-        const codeSnippet = `using System;
+        const { codeSnippet } = this.state;
 
-class Stock
-{
-    public string Symbol { get; }
-    public double Price { get; set; }
-
-    public Stock(string symbol, double price)
-    {
-        Symbol = symbol;
-        Price = price;
-    }
-}
-
-class StockAnalyzer
-{
-    public void AnalyzeStock(Stock stock)
-    {
-        if (stock.Price > 100)
-        {
-            Console.WriteLine($"Buy {stock.Symbol} stock!");
-        }
-        else if (stock.Price < 50)
-        {
-            Console.WriteLine($"Sell {stock.Symbol} stock!");
-        }
-    }
-}
-
-class Program
-{
-    static void Main(string[] args)
-    {
-        Stock stock = new Stock("AAPL", 120);
-        StockAnalyzer analyzer = new StockAnalyzer();
-        analyzer.AnalyzeStock(stock);
-    }
-}`;
-
+        
         return <CodeSnippet codeSnippet={codeSnippet} />;
+
     }
 }

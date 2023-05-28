@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-namespace PracticePortfolio.Models
+﻿namespace PracticePortfolio.Models
 {
     public class Singleton
     {

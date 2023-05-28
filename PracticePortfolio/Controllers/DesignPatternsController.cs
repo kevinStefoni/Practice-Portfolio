@@ -9,16 +9,16 @@ namespace PracticePortfolio.Controllers
     {
 
         [HttpGet ("singleton")]
-        public string SingletonDemo(int value, int newValue)
+        public IActionResult SingletonDemo(int value, int newValue)
         {
-            Singleton firstSingleton = Singleton.GetInstance();
-            Singleton secondSingleton = Singleton.GetInstance();
+            Singleton_ firstSingleton = Singleton_.GetInstance();
+            Singleton_ secondSingleton = Singleton_.GetInstance();
 
             firstSingleton.Value = value;
             secondSingleton.Value = newValue;
 
+            return Ok(new SingletonPair(firstSingleton, secondSingleton));
 
-            return "Hello";
         }
 
     }
