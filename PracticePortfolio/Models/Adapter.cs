@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using PracticePortfolio.Models.DTOs;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace PracticePortfolio.Models {
     
@@ -129,51 +131,33 @@ namespace PracticePortfolio.Models {
 
     public class NewPaymentGatewayAdapter : IPaymentGateway
     {
+        private readonly INewPaymentGateway _newPaymentGateway;
+
         public NewPaymentGatewayAdapter(INewPaymentGateway newPaymentGateway)
         {
-
+            _newPaymentGateway = newPaymentGateway;
         }
 
         public string ProcessPayment(string paymentDetails)
         {
-            return string.Empty;
+            NewPaymentData? newPaymentData = DeserializeNewPaymentData(paymentDetails);
+
+            if (newPaymentData is null)
+                return "Invalid payment data.";
+
+            return _newPaymentGateway.MakePayment(newPaymentData.Amount, newPaymentData.CardNumber, newPaymentData.CVV);
+
+        }
+
+        public string SerializeNewPaymentData(NewPaymentData newPaymentData)
+        {
+            return JsonConvert.SerializeObject(newPaymentData);
+        }
+
+        public NewPaymentData? DeserializeNewPaymentData(string serializedNewPaymentData)
+        {
+            return JsonConvert.DeserializeObject<NewPaymentData>(serializedNewPaymentData);
         }
     }
 
-
-    public class Adapter
-    {
-        public string Run(string paymentData)
-        {
-            IPaymentGateway legacyPaymentGateway = new LegacyPaymentGateway();
-            PaymentService paymentService = new(legacyPaymentGateway);
-            return paymentService.ProcessPaymentRequest(paymentData);
-        }
-
-        public string Run(decimal amount, string cardNumber, string cvv)
-        {
-            // Create an instance of the legacy payment gateway
-            IPaymentGateway legacyPaymentGateway = new LegacyPaymentGateway();
-
-            // Create an instance of the payment service using the legacy payment gateway
-            PaymentService paymentService = new(legacyPaymentGateway);
-
-            // Process payment using the existing payment gateway
-            paymentService.ProcessPaymentRequest("test");
-
-            /*            // Now, let's introduce the new payment gateway
-
-                        // Create an instance of the new payment gateway
-                        INewPaymentGateway newPaymentGateway = new NewPaymentGateway();
-
-                        // Create an adapter for the new payment gateway
-                        IPaymentGateway newPaymentGatewayAdapter = new NewPaymentGatewayAdapter(newPaymentGateway);
-
-                        // Update the payment service to use the new payment gateway through the adapter
-                        paymentService = new PaymentService(newPaymentGatewayAdapter);*/
-
-            // Process payment using the new payment gateway
-            return paymentService.ProcessPaymentRequest("test");
-        }
-    }
 }

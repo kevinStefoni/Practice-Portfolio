@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PracticePortfolio.Models;
+using PracticePortfolio.Models.DTOs;
 
 namespace PracticePortfolio.Controllers
 {
@@ -19,6 +20,18 @@ namespace PracticePortfolio.Controllers
 
             return Ok(new SingletonPair(firstSingleton, secondSingleton));
 
+        }
+
+        [HttpGet ("adapter")]
+        public IActionResult AdapterDemo(decimal amount, string cardNumber, string cvv)
+        {
+            INewPaymentGateway newPaymentGateway = new NewPaymentGateway();
+            NewPaymentGatewayAdapter newPaymentGatewayAdapter = new(newPaymentGateway);
+            NewPaymentData expectedNewPaymentData = new(amount, cardNumber, cvv);
+            string serializedNewPaymentData = newPaymentGatewayAdapter.SerializeNewPaymentData(expectedNewPaymentData);
+            string paymentStatement = newPaymentGatewayAdapter.ProcessPayment(serializedNewPaymentData);
+
+            return Ok(paymentStatement);
         }
 
     }

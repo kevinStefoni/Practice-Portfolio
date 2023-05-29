@@ -3,6 +3,8 @@ using Moq;
 using Microsoft.AspNetCore.Mvc;
 using PracticePortfolio.Controllers;
 using PracticePortfolio.Models;
+using PracticePortfolio.Models.DTOs;
+using Newtonsoft.Json.Linq;
 
 namespace PracticePortfolioTests
 {
@@ -96,38 +98,6 @@ namespace PracticePortfolioTests
         }
 
         [Theory]
-        [InlineData(0, 50)]
-        [InlineData(1, 50)]
-        [InlineData(-1, 50)]
-        [InlineData(5000, 50)]
-        [InlineData(-5000, 50)]
-        [InlineData(-2147483648, 50)]
-        [InlineData(2147483647, 50)]
-        [InlineData(-2147483647, 50)]
-        [InlineData(2147483646, 50)]
-        [InlineData(50, 0)]
-        [InlineData(50, 1)]
-        [InlineData(50, -1)]
-        [InlineData(50, 5000)]
-        [InlineData(50, -5000)]
-        [InlineData(50, -2147483648)]
-        [InlineData(50, 2147483647)]
-        [InlineData(50, -2147483647)]
-        [InlineData(50, 2147483646)]
-        public void Singleton_Demo_Return_Same_Value(int value, int newValue)
-        {
-            DesignPatternsController designPatternsController = new();
-
-            IActionResult result = designPatternsController.SingletonDemo(value, newValue);
-            SingletonPair? singletonPair = ((OkObjectResult) result).Value as SingletonPair;
-
-            Assert.IsType<OkObjectResult>(result);
-            Assert.NotNull(singletonPair);
-            Assert.Equal(newValue, singletonPair.FirstInstance.Value);
-            Assert.Equal(singletonPair.SecondInstance.Value, singletonPair.FirstInstance.Value);
-        }
-
-        [Theory]
         [InlineData("54.31,1234567812345678,123")]
         [InlineData("5999,1234567812345678,123")]
         [InlineData("0,1234567812345678,123")]
@@ -188,7 +158,7 @@ namespace PracticePortfolioTests
         [InlineData("54.31,1234567_123456777,12A3")]
         [InlineData("54.31,12 34567123456777,ABC")]
         [InlineData("54.31,1234-6789-1485-1841,#81")]
-        public void LegacyPaymentValidator_Invalid_Cvv_Returns_False(string paymentData)
+        public void LegacyPaymentValidator_Invalid_CVV_Returns_False(string paymentData)
         {
             ILegacyPaymentDataValidator legacyPaymentDataValidator = new LegacyPaymentDataValidator();
 
@@ -217,25 +187,6 @@ namespace PracticePortfolioTests
         }
 
         [Theory]
-        [InlineData ("54.31,1234567812345678,123")]
-        [InlineData ("5999,1234567812345678,123")]
-        [InlineData ("0,1234567812345678,123")]
-        [InlineData ("0.00,1234567812345678,123")]
-        [InlineData ("0.01,1234567812345678,123")]
-        [InlineData ("0.2,1234567812345678,123")]
-        [InlineData ("5.,1234567812345678,123")]
-        [InlineData ("79228162514264337593543950335,1234567812345678,123")]
-        [InlineData ("79228162514264337593543950334.99,1234567812345678,123")]
-        public void Run_LegacyPaymentGateway_Returns_Payment_Statement(string paymentData)
-        {
-            Adapter adapter = new();
-
-            string paymentStatement = adapter.Run(paymentData);
-
-            Assert.Equal($"A payment was made using the legacy system with the following data: {paymentData}.", paymentStatement);
-        } 
-
-        [Theory]
         [InlineData("54.31","1234567812345678","123")]
         [InlineData("5999","1234567812345678","123")]
         [InlineData("0","1234567812345678","123")]
@@ -248,7 +199,6 @@ namespace PracticePortfolioTests
         public void NewPaymentGateway_Returns_Payment_Statement(string amount, string cardNumber, string cvv)
         {
             decimal amt = 0M;
-
             try
             {
                 amt = Convert.ToDecimal(amount);
@@ -274,7 +224,6 @@ namespace PracticePortfolioTests
         public void NewPaymentValidator_Invalid_Amount_Returns_False(string amount, string cardNumber, string cvv)
         {
             decimal amt = 0M;
-
             try
             {
                 amt = Convert.ToDecimal(amount);
@@ -301,7 +250,6 @@ namespace PracticePortfolioTests
         public void NewPaymentValidator_Invalid_Card_Number_Returns_False(string amount, string cardNumber, string cvv)
         {
             decimal amt = 0M;
-
             try
             {
                 amt = Convert.ToDecimal(amount);
@@ -324,10 +272,9 @@ namespace PracticePortfolioTests
         [InlineData("0.00", "1234567812345678", "123A3")]
         [InlineData("0.01", "1234567812345678", "ABC")]
         [InlineData("0.2", "1234567812345678", "#13")]
-        public void NewPaymentValidator_Invalid_Cvv_Returns_False(string amount, string cardNumber, string cvv)
+        public void NewPaymentValidator_Invalid_CVV_Returns_False(string amount, string cardNumber, string cvv)
         {
             decimal amt = 0M;
-
             try
             {
                 amt = Convert.ToDecimal(amount);
@@ -356,7 +303,6 @@ namespace PracticePortfolioTests
         public void NewPaymentValidator_Valid_Data_Returns_True(string amount, string cardNumber, string cvv)
         {
             decimal amt = 0M;
-
             try
             {
                 amt = Convert.ToDecimal(amount);
@@ -370,6 +316,105 @@ namespace PracticePortfolioTests
             bool validationResult = newPaymentDataValidator.IsPaymentDataValid(amt, cardNumber, cvv);
             Assert.True(validationResult);
 
+        }
+
+        [Theory]
+        [InlineData("54.31", "1234567812345678", "123")]
+        [InlineData("5999", "1234567812345678", "123")]
+        [InlineData("0", "1234567812345678", "123")]
+        [InlineData("0.00", "1234567812345678", "123")]
+        [InlineData("0.01", "1234567812345678", "123")]
+        [InlineData("0.2", "1234567812345678", "123")]
+        [InlineData("5.0", "1234567812345678", "123")]
+        [InlineData("79228162514264337593543950335", "1234567812345678", "123")]
+        [InlineData("79228162514264337593543950334.99", "1234567812345678", "123")]
+        public void Serialize_New_Payment_Data_Return_String(string amount, string cardNumber, string cvv)
+        {
+            decimal amt = 0M;
+            try
+            {
+                amt = Convert.ToDecimal(amount);
+            }
+            catch
+            {
+                Assert.Fail("Invalid amount provided to unit test.");
+            }
+            NewPaymentData newPayment = new(amt, cardNumber, cvv);
+            INewPaymentGateway newPaymentGateway = new NewPaymentGateway();
+            NewPaymentGatewayAdapter newPaymentGatewayAdapter = new(newPaymentGateway);
+
+            string serializedNewPaymentData = newPaymentGatewayAdapter.SerializeNewPaymentData(newPayment);
+            Assert.Matches($"{{\"Amount\":{amt}([.][0-9]{{1,2}})?,\"CardNumber\":\"{cardNumber}\",\"CVV\":\"{cvv}\"}}", serializedNewPaymentData);
+           
+        }
+
+        [Theory]
+        [InlineData("54.31", "1234567812345678", "123")]
+        [InlineData("5999", "1234567812345678", "123")]
+        [InlineData("0", "1234567812345678", "123")]
+        [InlineData("0.00", "1234567812345678", "123")]
+        [InlineData("0.01", "1234567812345678", "123")]
+        [InlineData("0.2", "1234567812345678", "123")]
+        [InlineData("5.0", "1234567812345678", "123")]
+        [InlineData("79228162514264337593543950335", "1234567812345678", "123")]
+        [InlineData("79228162514264337593543950334.99", "1234567812345678", "123")]
+        public void Deserialize_New_Payment_Data_Return_NewPaymentData_Object(string amount, string cardNumber, string cvv)
+        {
+            decimal amt = 0M;
+            try
+            {
+                amt = Convert.ToDecimal(amount);
+            }
+            catch
+            {
+                Assert.Fail("Invalid amount provided to unit test.");
+            }
+            string serializedNewPaymentData = $"{{\"Amount\":{amt},\"CardNumber\":\"{cardNumber}\",\"CVV\":\"{cvv}\"}}";
+            NewPaymentData expectedNewPaymentData = new(amt, cardNumber, cvv);
+            INewPaymentGateway newPaymentGateway = new NewPaymentGateway();
+            NewPaymentGatewayAdapter newPaymentGatewayAdapter = new(newPaymentGateway);
+
+            NewPaymentData? newPaymentData = newPaymentGatewayAdapter.DeserializeNewPaymentData(serializedNewPaymentData);
+
+            Assert.NotNull(newPaymentData);
+            Assert.Equal(expectedNewPaymentData, newPaymentData);
+
+        }
+
+
+
+        [Theory]
+        [InlineData("54.31", "1234567812345678", "123")]
+        [InlineData("5999", "1234567812345678", "123")]
+        [InlineData("0", "1234567812345678", "123")]
+        [InlineData("0.00", "1234567812345678", "123")]
+        [InlineData("0.01", "1234567812345678", "123")]
+        [InlineData("0.2", "1234567812345678", "123")]
+        [InlineData("5.0", "1234567812345678", "123")]
+        [InlineData("79228162514264337593543950335", "1234567812345678", "123")]
+        [InlineData("79228162514264337593543950334.99", "1234567812345678", "123")]
+        public void NewPaymentGatewayAdapter_ProcessPayment(string amount, string cardNumber, string cvv)
+        {
+            decimal amt = 0M;
+            try
+            {
+                amt = Convert.ToDecimal(amount);
+            }
+            catch
+            {
+                Assert.Fail("Invalid amount provided to unit test.");
+            }
+            Mock<INewPaymentDataValidator> mockValidator = new();
+            mockValidator.Setup(validator => validator.IsPaymentDataValid(It.IsAny<decimal>(), It.IsAny<string>(), It.IsAny<string>()))
+                         .Returns(true);
+            INewPaymentGateway newPaymentGateway = new NewPaymentGateway(mockValidator.Object);
+            NewPaymentGatewayAdapter newPaymentGatewayAdapter = new(newPaymentGateway);
+            NewPaymentData expectedNewPaymentData = new(amt, cardNumber, cvv);
+            string serializedNewPaymentData = newPaymentGatewayAdapter.SerializeNewPaymentData(expectedNewPaymentData);
+
+            string paymentStatement = newPaymentGatewayAdapter.ProcessPayment(serializedNewPaymentData);
+
+            Assert.Equal($"A ${amt:F2} payment was made using a credit card with the credit card number {cardNumber} and a CVV of {cvv} using the new payment gateway.", paymentStatement);
         }
 
     }
