@@ -1,5 +1,7 @@
-import { Singleton } from "./components/Singleton";
 import { Home } from "./components/Home";
+import { Singleton } from "./components/Singleton";
+import { Adapter } from "./components/Adapter";
+
 
 const AppRoutes = [
   {
@@ -9,7 +11,11 @@ const AppRoutes = [
   {
     path: '/singleton',
     element: <Singleton />
-  }
+    },
+    {
+        path: '/adapter',
+        element: <Adapter />
+    }
 ];
 
 export default AppRoutes;

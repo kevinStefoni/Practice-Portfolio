@@ -18,6 +18,7 @@ export class NavMenu extends Component {
                     </button>
                     <Link to="/">Home</Link>
                     <Link to="/singleton">Singleton</Link>
+                    <Link to="/adapter">Adapter</Link>
                 </div>
 
                 <button onClick={this.props.onPushToggle} className="hamburger-button">
