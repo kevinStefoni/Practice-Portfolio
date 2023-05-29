@@ -4,6 +4,7 @@ import { coldarkDark as codeTheme } from 'react-syntax-highlighter/dist/esm/styl
 import 'prismjs';
 import 'prismjs/components/prism-csharp';
 import './CodeSnippet.css';
+import './coldarkDark.css';
 
 export class CodeSnippet extends Component {
     render() {

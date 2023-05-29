@@ -17,7 +17,6 @@ export class NavMenu extends Component {
                         &times;
                     </button>
                     <Link to="/">Home</Link>
-                    <Link to="/fetch-data">Weather</Link>
                     <Link to="/singleton">Singleton</Link>
                 </div>
 

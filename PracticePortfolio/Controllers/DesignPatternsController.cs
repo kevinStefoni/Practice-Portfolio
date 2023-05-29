@@ -11,8 +11,8 @@ namespace PracticePortfolio.Controllers
         [HttpGet ("singleton")]
         public IActionResult SingletonDemo(int value, int newValue)
         {
-            Singleton_ firstSingleton = Singleton_.GetInstance();
-            Singleton_ secondSingleton = Singleton_.GetInstance();
+            Singleton firstSingleton = Singleton.GetInstance();
+            Singleton secondSingleton = Singleton.GetInstance();
 
             firstSingleton.Value = value;
             secondSingleton.Value = newValue;

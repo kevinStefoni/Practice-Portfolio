@@ -1,5 +1,4 @@
 import { Singleton } from "./components/Singleton";
-import { FetchData } from "./components/FetchData";
 import { Home } from "./components/Home";
 
 const AppRoutes = [
@@ -10,10 +9,6 @@ const AppRoutes = [
   {
     path: '/singleton',
     element: <Singleton />
-  },
-  {
-    path: '/fetch-data',
-    element: <FetchData />
   }
 ];
 
