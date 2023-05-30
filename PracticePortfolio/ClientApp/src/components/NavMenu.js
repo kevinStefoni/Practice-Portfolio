@@ -3,28 +3,83 @@ import { Link } from 'react-router-dom';
 import './NavMenu.css';
 
 export class NavMenu extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            activeLink: '',
+            isClosing: false
+        };
+    }
+
+    componentDidMount() {
+        const { pathname } = window.location;
+        this.setActiveLink(pathname);
+        window.addEventListener('popstate', this.handlePopState);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('popstate', this.handlePopState);
+    }
+
+    handlePopState = () => {
+        const { pathname } = window.location;
+        this.setActiveLink(pathname);
+    };
+
+    setActiveLink = (pathname) => {
+        this.setState({ activeLink: pathname });
+    };
+
     handleCloseNav = () => {
+        this.setState({ isClosing: true });
         this.props.onCloseNav();
+        setTimeout(() => {
+            this.setState({ isClosing: false });
+        }, 250);
     };
 
     render() {
         const { isPushed } = this.props;
+        const { activeLink, isClosing } = this.state;
+        const showHamburger = !isPushed && !isClosing;
 
         return (
             <div>
-                <div id="mySidenav" className={`sidenav ${isPushed ? 'open' : ''}`}>
+                <div id="mySidenav" className={`sidenav ${isPushed ? 'open' : ''} ${isClosing ? 'closing' : ''}`}>
                     <button className="close-nav-btn" onClick={this.handleCloseNav}>
                         &times;
                     </button>
-                    <Link to="/">Home</Link>
-                    <Link to="/singleton">Singleton</Link>
-                    <Link to="/adapter">Adapter</Link>
+                    <Link
+                        to="/"
+                        className={activeLink === '/' ? 'active-link' : ''}
+                        onClick={() => this.setActiveLink('/')}
+                    >
+                        Home
+                    </Link>
+                    <Link
+                        to="/singleton"
+                        className={activeLink === '/singleton' ? 'active-link' : ''}
+                        onClick={() => this.setActiveLink('/singleton')}
+                    >
+                        Singleton
+                    </Link>
+                    <Link
+                        to="/adapter"
+                        className={activeLink === '/adapter' ? 'active-link' : ''}
+                        onClick={() => this.setActiveLink('/adapter')}
+                    >
+                        Adapter
+                    </Link>
                 </div>
 
-                <button onClick={this.props.onPushToggle} className="hamburger-button">
-                    <span className="hamburger-icon"></span>
-                </button>
+                {showHamburger && (
+                    <button onClick={this.props.onPushToggle} className="hamburger-button">
+                        <span className="hamburger-icon"></span>
+                    </button>
+                )}
             </div>
         );
     }
 }
+
+export default NavMenu;
