@@ -51,24 +51,31 @@ export class NavMenu extends Component {
                     </button>
                     <Link
                         to="/"
-                        className={activeLink === '/' ? 'active-link' : ''}
+                        className={`nav-text ${activeLink === '/' ? 'active-link' : ''}`}
                         onClick={() => this.setActiveLink('/')}
                     >
                         Home
                     </Link>
                     <Link
                         to="/singleton"
-                        className={activeLink === '/singleton' ? 'active-link' : ''}
+                        className={`nav-text ${activeLink === '/singleton' ? 'active-link' : ''}`}
                         onClick={() => this.setActiveLink('/singleton')}
                     >
                         Singleton
                     </Link>
                     <Link
                         to="/adapter"
-                        className={activeLink === '/adapter' ? 'active-link' : ''}
+                        className={`nav-text ${activeLink === '/adapter' ? 'active-link' : ''}`}
                         onClick={() => this.setActiveLink('/adapter')}
                     >
                         Adapter
+                    </Link>
+                    <Link
+                        to="/explicit-operator"
+                        className={`nav-text ${activeLink === '/explicit-operator' ? 'active-link' : ''}`}
+                        onClick={() => this.setActiveLink('/explicit-operator')}
+                    >
+                        Explicit Operator
                     </Link>
                 </div>
 

@@ -119,3 +119,9 @@
 .hidden {
     display: none !important;
 }
+
+.nav-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+}

@@ -1,0 +1,2 @@
+﻿        [HttpGet("explicit-operator")]
+        public IActionResult ExplicitOperatorDemo(double kilograms) => Ok((ImperialPound)kilograms);
