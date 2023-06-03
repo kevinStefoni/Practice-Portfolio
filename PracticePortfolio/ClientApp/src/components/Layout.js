@@ -26,7 +26,7 @@ export class Layout extends Component {
                     onPushToggle={this.handlePushToggle}
                     onCloseNav={this.handleCloseNav}
                 />
-                <Container tag="main" id="main" style={{ marginLeft: isPushed ? '250px' : '0' }}>
+                <Container tag="main" id="main" style={{ marginLeft: isPushed ? '250px' : '2.25em' }}>
                     {this.props.children}
                 </Container>
             </div>

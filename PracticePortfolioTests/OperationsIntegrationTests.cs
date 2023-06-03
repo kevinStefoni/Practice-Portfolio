@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using PracticePortfolio.Controllers;
 using PracticePortfolio.Models;
-
+using PracticePortfolio.Models.DTOs;
+using PracticePortfolioTests.Mocks;
 
 namespace PracticePortfolioTests
 {
@@ -22,6 +23,21 @@ namespace PracticePortfolioTests
             subject.Should().NotBeNull();
             subject.Should().BeOfType<ImperialPound>();
             subject?.Pounds.Should().Be(expectedImperialWeight);
+
+        }
+
+        [Fact]
+        public void ImplicitOperatorDemo_Returns_UserDTO_With_Data()
+        {
+            CsharpController csharpController = new();
+
+            IActionResult result = csharpController.ImplicitOperatorDemo();
+            IUserDTO subject = (UserDTO)(((OkObjectResult)result).Value ?? new MockUserDTO());
+
+            subject.Should().NotBeNull();
+            subject.Should().BeOfType<UserDTO>();
+            subject.Name.Should().NotBeNullOrEmpty();
+            subject.Email.Should().NotBeNullOrEmpty();
 
         }
 

@@ -77,6 +77,13 @@ export class NavMenu extends Component {
                     >
                         Explicit Operator
                     </Link>
+                    <Link
+                        to="/implicit-operator"
+                        className={`nav-text ${activeLink === '/implicit-operator' ? 'active-link' : ''}`}
+                        onClick={() => this.setActiveLink('/implicit-operator')}
+                    >
+                        Implicit Operator
+                    </Link>
                 </div>
 
                 {showHamburger && (
