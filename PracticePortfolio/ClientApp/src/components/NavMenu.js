@@ -84,6 +84,13 @@ export class NavMenu extends Component {
                     >
                         Implicit Operator
                     </Link>
+                    <Link
+                        to="/wrap-method"
+                        className={`nav-text ${activeLink === '/wrap-method' ? 'active-link' : ''}`}
+                        onClick={() => this.setActiveLink('/wrap-method')}
+                    >
+                        Wrap Method
+                    </Link>
                 </div>
 
                 {showHamburger && (

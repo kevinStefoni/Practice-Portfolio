@@ -3,6 +3,7 @@ import { Singleton } from "./components/Singleton";
 import { Adapter } from "./components/Adapter";
 import { ExplicitOperator } from "./components/ExplicitOperator";
 import { ImplicitOperator } from "./components/ImplicitOperator";
+import { WrapMethod } from "./components/WrapMethod";
 
 
 const AppRoutes = [
@@ -25,6 +26,10 @@ const AppRoutes = [
     {
         path: '/implicit-operator',
         element: <ImplicitOperator />
+    },
+    {
+        path: '/wrap-method',
+        element: <WrapMethod />
     }
 ];
 

@@ -1,6 +1,9 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PracticePortfolio.Models;
+using PracticePortfolio.Controllers;
+using Microsoft.AspNetCore.Mvc;
+using PracticePortfolio.Models.DTOs;
 
 namespace PracticePortfolioTests
 {
@@ -34,6 +37,46 @@ namespace PracticePortfolioTests
 
             subject.PaymentLogger.Should().ContainInOrder(expectedPaymentStatement1, expectedPaymentStatement2);
 
+        }
+
+        [TestMethod]
+        public void Test_WrapMethodDemo_Returns_Correct_Amount()
+        {
+            TestingMethodsController subject = new();
+            decimal payRate = 13.00M;
+            IList<int> dailyHoursWorked1 = new List<int>() { 0, 8, 6, 10, 0, 0 };
+            IList<int> dailyHoursWorked2 = new List<int>() { 0, 8, 8, 8, 8, 8, 0};
+            IList<int> dailyHoursWorked3 = new List<int>() { 0, 8, 12, 8, 10, 8, 0};
+            IList<int>[] hoursWorkedTotalList = new IList<int>[] {dailyHoursWorked1, dailyHoursWorked2, dailyHoursWorked3 };
+            int totalHoursWorked = dailyHoursWorked1.Sum(t => t) + dailyHoursWorked2.Sum(t => t) + dailyHoursWorked3.Sum(t => t);
+            decimal expectedPay = totalHoursWorked * payRate;
+
+            IActionResult result = subject.WrapMethodDemo(payRate, hoursWorkedTotalList);
+            decimal amount = (decimal)(((OkObjectResult)result).Value ?? 0);
+
+            result.Should().BeOfType<OkObjectResult>();
+            amount.Should().Be(expectedPay);
+
+        }
+
+        [TestMethod]
+        public void Test_WrapMethodDemoWithPayload_Returns_Correct_Amount()
+        {
+            TestingMethodsController subject = new();
+            decimal payRate = 13.00M;
+            IList<int> dailyHoursWorked1 = new List<int>() { 0, 8, 6, 10, 0, 0 };
+            IList<int> dailyHoursWorked2 = new List<int>() { 0, 8, 8, 8, 8, 8, 0 };
+            IList<int> dailyHoursWorked3 = new List<int>() { 0, 8, 12, 8, 10, 8, 0 };
+            IList<int>[] hoursWorkedTotalList = new IList<int>[] { dailyHoursWorked1, dailyHoursWorked2, dailyHoursWorked3 };
+            int totalHoursWorked = dailyHoursWorked1.Sum(t => t) + dailyHoursWorked2.Sum(t => t) + dailyHoursWorked3.Sum(t => t);
+            decimal expectedPay = totalHoursWorked * payRate;
+            WrapMethodPayload payload = new() { PayRate = payRate, DailyHoursWorked = hoursWorkedTotalList };
+
+            IActionResult result = subject.WrapMethodDemoWithPayload(payload);
+            decimal amount = (decimal)(((OkObjectResult)result).Value ?? 0);
+
+            result.Should().BeOfType<OkObjectResult>();
+            amount.Should().Be(expectedPay);
         }
 
     }
