@@ -10,17 +10,6 @@ namespace PracticePortfolioTests
     {
 
         [TestMethod]
-        public void Test_Create_Employee_Object()
-        {
-            decimal payRate = 15.25M;
-
-            Employee subject = new(payRate);
-
-            subject.Should().NotBeNull();
-            subject.Should().BeOfType<Employee>();
-        }
-
-        [TestMethod]
         public void Test_Pay_No_Hours_Worked_Returns_0()
         {
             decimal payRate = 15.25M;
@@ -81,39 +70,40 @@ namespace PracticePortfolioTests
         {
             IList<int> dailyHoursWorked = new List<int>() { 8, 8, 7, 8, 0 };
             decimal payRate = 15.25M;
-            Employee employee = new(payRate);
-            employee.AddHours(dailyHoursWorked);
+            Employee subject = new(payRate);
+            subject.AddHours(dailyHoursWorked);
             int totalHours = dailyHoursWorked.Sum(t => t);
             decimal pay = totalHours * payRate;
             string expectedPaymentStatement = $"Employee was paid ${pay}";
 
-            employee.LogPayment(pay);
-            IList<string> subject = employee.PaymentLogger;
+            subject.LogPayment(pay);
+            IList<string> payments = subject.PaymentLogger;
 
-            subject.Should().OnlyContain(actualStatement => actualStatement == expectedPaymentStatement);
+            payments.Should().OnlyContain(actualStatement => actualStatement == expectedPaymentStatement);
            
         }
 
         [TestMethod]
-        public void Test_Add_Week_Of_Hours()
+        public void Test_Add_Multiple_Weeks_Of_Hours()
         {
-            IList<int> hoursWorkedLastWeek = new List<int>() { 0, 8, 8, 7, 4, 8, 0 };
-            IList<int> expectedHoursWorked = hoursWorkedLastWeek;
+            IList<int> hoursWorkedLastWeek1 = new List<int>() { 0, 8, 8, 7, 4, 8, 0 };
+            IList<int> hoursWorkedLastWeek2 = new List<int>() { 0, 8, 5, 7, 10, 8, 0 };
+            IList<int> expectedHoursWorked = hoursWorkedLastWeek1.Concat(hoursWorkedLastWeek2).ToList();
             decimal payRate = 15.25M;
-            Employee employee = new(payRate);
+            Employee subject = new(payRate);
 
-            employee.AddHours(hoursWorkedLastWeek);
-            Privateer privateer = new();
-            IList<int> subject = privateer.GetHoursWorked(employee);
+            subject.AddHours(hoursWorkedLastWeek1);
+            subject.AddHours(hoursWorkedLastWeek2);
+            IList<int> payments = Privateer.GetHoursWorked(subject);
 
-            subject.Should().BeEquivalentTo(expectedHoursWorked);
+            payments.Should().BeEquivalentTo(expectedHoursWorked);
             
 
         }
 
         public class Privateer
         {
-            public List<int> GetHoursWorked(Employee employee)
+            public static List<int> GetHoursWorked(Employee employee)
             {
                 var fieldInfo = typeof(Employee).GetField("_hoursWorked", BindingFlags.NonPublic | BindingFlags.Instance);
                 return (List<int>) (fieldInfo?.GetValue(employee) ?? new List<int>());

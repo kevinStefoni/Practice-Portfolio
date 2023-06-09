@@ -24,7 +24,7 @@
             {
                 pay += hours * _payRate;
             }
-
+            _hoursWorked.Clear();
 
             return pay;
         }
@@ -32,10 +32,11 @@
         /// <summary>
         /// This is the wrap method. 
         /// </summary>
-        public void Pay()
+        public decimal Pay()
         {
             decimal amountToPay = CalculatePay();
             LogPayment(amountToPay);
+            return amountToPay;
         }
 
         public void LogPayment(decimal amountToPay)
