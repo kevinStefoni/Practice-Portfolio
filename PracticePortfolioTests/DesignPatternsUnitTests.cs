@@ -1,10 +1,6 @@
 using Moq;
-
-using Microsoft.AspNetCore.Mvc;
-using PracticePortfolio.Controllers;
 using PracticePortfolio.Models;
 using PracticePortfolio.Models.DTOs;
-using Newtonsoft.Json.Linq;
 
 namespace PracticePortfolioTests
 {
