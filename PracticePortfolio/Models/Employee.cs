@@ -1,13 +1,18 @@
 ﻿namespace PracticePortfolio.Models
 {
-    public class Employee
+    public class Employee : IEmployee
     {
         private readonly decimal _payRate;
         private IList<int> _hoursWorked = new List<int>();
+
+        public string Name { get; set; } = string.Empty; 
+
         public IList<string> PaymentLogger = new List<string>();
 
-        public Employee(decimal payRate)
+
+        public Employee(string name, decimal payRate)
         {
+            Name = name;
             _payRate = payRate;
         }
 

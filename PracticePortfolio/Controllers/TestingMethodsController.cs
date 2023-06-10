@@ -12,15 +12,16 @@ namespace PracticePortfolio.Controllers
         [HttpPost("wrap-method-payload")]
         public IActionResult WrapMethodDemoWithPayload([FromBody] WrapMethodPayload payload)
         {
+            string name = payload.Name;
             decimal payRate = payload.PayRate;
             IList<int>[] dailyHoursWorked = payload.DailyHoursWorked;
 
-            return WrapMethodDemo(payRate, dailyHoursWorked);
+            return WrapMethodDemo(name, payRate, dailyHoursWorked);
         }
 
-        public IActionResult WrapMethodDemo(decimal payRate, params IList<int>[] dailyHoursWorked)
+        public IActionResult WrapMethodDemo(string name, decimal payRate, params IList<int>[] dailyHoursWorked)
         {
-            Employee employee = new(payRate);
+            Employee employee = new(name, payRate);
             foreach (IList<int> hours in dailyHoursWorked)
             {
                 employee.AddHours(hours);

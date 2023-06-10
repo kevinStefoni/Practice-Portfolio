@@ -8,12 +8,16 @@ namespace PracticePortfolioTests
     [TestClass]
     public class TestingMethodsUnitTests
     {
+        public static IEnumerable<object[]> EmployeeTestData()
+        {
+            yield return new object[] { "John Doe", 15.25M };
+        }
 
         [TestMethod]
-        public void Test_Pay_No_Hours_Worked_Returns_0()
+        [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
+        public void Test_Pay_No_Hours_Worked_Returns_0(string name, decimal payRate)
         {
-            decimal payRate = 15.25M;
-            Employee subject = new(payRate);
+            Employee subject = new(name, payRate);
 
             decimal pay = subject.CalculatePay();
 
@@ -21,11 +25,11 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        public void Test_Pay_1_Hour_Worked_In_One_Day_Returns_Pay_Rate()
+        [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
+        public void Test_Pay_1_Hour_Worked_In_One_Day_Returns_Pay_Rate(string name, decimal payRate)
         {
             IList<int> dailyHoursWorked = new List<int>() { 1 };
-            decimal payRate = 15.25M;
-            Employee subject = new(payRate);
+            Employee subject = new(name, payRate);
             subject.AddHours(dailyHoursWorked);
             decimal expectedPay = payRate;
 
@@ -35,15 +39,14 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        public void Test_Pay_Hours_Worked_In_One_Day_Returns_Correct_Pay()
+        [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
+        public void Test_Pay_Hours_Worked_In_One_Day_Returns_Correct_Pay(string name, decimal payRate)
         {
             int hoursInOneDay = 5;
             IList<int> dailyHoursWorked = new List<int>() { hoursInOneDay };
-            decimal payRate = 15.25M;
-            Employee subject = new(payRate);
+            Employee subject = new(name, payRate);
             subject.AddHours(dailyHoursWorked);
             decimal expectedPay = hoursInOneDay * payRate;
-
 
             decimal pay = subject.CalculatePay();
 
@@ -51,11 +54,11 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        public void Test_Pay_Hours_Worked_In_Multiple_Days_Returns_Correct_Pay()
+        [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
+        public void Test_Pay_Hours_Worked_In_Multiple_Days_Returns_Correct_Pay(string name, decimal payRate)
         {
             IList<int> dailyHoursWorked = new List<int>() { 8, 8, 7, 8, 0 };
-            decimal payRate = 15.25M;
-            Employee subject = new(payRate);
+            Employee subject = new(name, payRate);
             subject.AddHours(dailyHoursWorked);
             int totalHours = dailyHoursWorked.Sum(t => t);
             decimal expectedPay = totalHours * payRate;
@@ -66,11 +69,11 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        public void Test_Log_Payment_Returns_Payment_Confirmation_Statement_With_Correct_Amount()
+        [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
+        public void Test_Log_Payment_Returns_Payment_Confirmation_Statement_With_Correct_Amount(string name, decimal payRate)
         {
             IList<int> dailyHoursWorked = new List<int>() { 8, 8, 7, 8, 0 };
-            decimal payRate = 15.25M;
-            Employee subject = new(payRate);
+            Employee subject = new(name, payRate);
             subject.AddHours(dailyHoursWorked);
             int totalHours = dailyHoursWorked.Sum(t => t);
             decimal pay = totalHours * payRate;
@@ -80,25 +83,22 @@ namespace PracticePortfolioTests
             IList<string> payments = subject.PaymentLogger;
 
             payments.Should().OnlyContain(actualStatement => actualStatement == expectedPaymentStatement);
-           
         }
 
         [TestMethod]
-        public void Test_Add_Multiple_Weeks_Of_Hours()
+        [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
+        public void Test_Add_Multiple_Weeks_Of_Hours(string name, decimal payRate)
         {
             IList<int> hoursWorkedLastWeek1 = new List<int>() { 0, 8, 8, 7, 4, 8, 0 };
             IList<int> hoursWorkedLastWeek2 = new List<int>() { 0, 8, 5, 7, 10, 8, 0 };
             IList<int> expectedHoursWorked = hoursWorkedLastWeek1.Concat(hoursWorkedLastWeek2).ToList();
-            decimal payRate = 15.25M;
-            Employee subject = new(payRate);
+            Employee subject = new(name, payRate);
 
             subject.AddHours(hoursWorkedLastWeek1);
             subject.AddHours(hoursWorkedLastWeek2);
             IList<int> payments = Privateer.GetHoursWorked(subject);
 
             payments.Should().BeEquivalentTo(expectedHoursWorked);
-            
-
         }
 
         public class Privateer
@@ -106,10 +106,8 @@ namespace PracticePortfolioTests
             public static List<int> GetHoursWorked(Employee employee)
             {
                 var fieldInfo = typeof(Employee).GetField("_hoursWorked", BindingFlags.NonPublic | BindingFlags.Instance);
-                return (List<int>) (fieldInfo?.GetValue(employee) ?? new List<int>());
+                return (List<int>)(fieldInfo?.GetValue(employee) ?? new List<int>());
             }
         }
-
-
     }
 }
