@@ -1,0 +1,4 @@
+﻿John Doe earns $15.25/hr.
+Jane Smith earns $20.50/hr.
+Nicolas Garcia earns $19.25/hr.
+Gracie Smith earns $17.25/hr.

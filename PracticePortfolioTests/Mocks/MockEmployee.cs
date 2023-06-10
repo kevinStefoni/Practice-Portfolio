@@ -6,6 +6,8 @@ namespace PracticePortfolioTests.Mocks
     {
         public string Name { get; set; } = "John Doe";
 
+        public IList<string> PaymentLogger { get; set; } = new List<string>();
+
         public void AddHours(IList<int> newHoursWorked)
         {
             throw new NotImplementedException();

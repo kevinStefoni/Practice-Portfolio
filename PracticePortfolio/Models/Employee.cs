@@ -7,7 +7,7 @@
 
         public string Name { get; set; } = string.Empty; 
 
-        public IList<string> PaymentLogger = new List<string>();
+        public IList<string> PaymentLogger { get; set; } = new List<string>();
 
 
         public Employee(string name, decimal payRate)
@@ -47,6 +47,11 @@
         public void LogPayment(decimal amountToPay)
         {
             PaymentLogger.Add($"Employee was paid ${amountToPay}");
+        }
+
+        public override string ToString()
+        {
+            return $"{Name} earns ${_payRate:0.00}/hr.";
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using ApprovalTests;
+using ApprovalTests.Reporters;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PracticePortfolio.Models;
 using System.Reflection;
@@ -6,11 +8,26 @@ using System.Reflection;
 namespace PracticePortfolioTests
 {
     [TestClass]
+    [UseReporter(typeof(DiffReporter))]
     public class TestingMethodsUnitTests
     {
         public static IEnumerable<object[]> EmployeeTestData()
         {
             yield return new object[] { "John Doe", 15.25M };
+        }
+
+        public static IEnumerable<object[]> MultipleEmployeesTestData()
+        {
+            yield return new object[]
+            {
+                new IEmployee[]
+                {
+                    new Employee("John Doe", 15.25M),
+                    new Employee("Jane Smith", 20.50M),
+                    new Employee("Nicolas Garcia", 19.25M),
+                    new Employee("Gracie Smith", 17.25M)
+                }
+            };
         }
 
         [TestMethod]
@@ -73,7 +90,7 @@ namespace PracticePortfolioTests
         public void Test_Log_Payment_Returns_Payment_Confirmation_Statement_With_Correct_Amount(string name, decimal payRate)
         {
             IList<int> dailyHoursWorked = new List<int>() { 8, 8, 7, 8, 0 };
-            Employee subject = new(name, payRate);
+            IEmployee subject = new Employee(name, payRate);
             subject.AddHours(dailyHoursWorked);
             int totalHours = dailyHoursWorked.Sum(t => t);
             decimal pay = totalHours * payRate;
@@ -92,7 +109,7 @@ namespace PracticePortfolioTests
             IList<int> hoursWorkedLastWeek1 = new List<int>() { 0, 8, 8, 7, 4, 8, 0 };
             IList<int> hoursWorkedLastWeek2 = new List<int>() { 0, 8, 5, 7, 10, 8, 0 };
             IList<int> expectedHoursWorked = hoursWorkedLastWeek1.Concat(hoursWorkedLastWeek2).ToList();
-            Employee subject = new(name, payRate);
+            IEmployee subject = new Employee(name, payRate);
 
             subject.AddHours(hoursWorkedLastWeek1);
             subject.AddHours(hoursWorkedLastWeek2);
@@ -101,9 +118,26 @@ namespace PracticePortfolioTests
             payments.Should().BeEquivalentTo(expectedHoursWorked);
         }
 
+        [TestMethod]
+        [DynamicData(nameof(MultipleEmployeesTestData), DynamicDataSourceType.Method)]
+        public void Test_To_String_Returns_Employee_Name_And_Pay_Rate(IEmployee[] employees)
+        {
+            IEmployee[] subject = employees;
+            string result = string.Empty;
+
+            foreach(IEmployee emp in subject)
+            {
+                result += emp.ToString() + "\r\n";
+            }
+
+            Approvals.Verify(result);
+
+        }
+
+
         public class Privateer
         {
-            public static List<int> GetHoursWorked(Employee employee)
+            public static List<int> GetHoursWorked(IEmployee employee)
             {
                 var fieldInfo = typeof(Employee).GetField("_hoursWorked", BindingFlags.NonPublic | BindingFlags.Instance);
                 return (List<int>)(fieldInfo?.GetValue(employee) ?? new List<int>());

@@ -2,18 +2,16 @@
 {
     public interface IEmployee
     {
+        string Name { get; set; }
 
-        public string Name { get; set; }
+        IList<string> PaymentLogger { get; set; }
 
-        public void AddHours(IList<int> newHoursWorked);
+        void AddHours(IList<int> newHoursWorked);
 
-        public decimal CalculatePay();
+        decimal CalculatePay();
 
-        public decimal Pay();
+        decimal Pay();
 
-        public void LogPayment(decimal amountToPay);
-
-
-
+        void LogPayment(decimal amountToPay);
     }
 }
