@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PracticePortfolio.Models;
 using PracticePortfolio.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using PracticePortfolio.Models.Employee_Models;
 
 namespace PracticePortfolioTests
 {
@@ -27,7 +28,7 @@ namespace PracticePortfolioTests
         public void Test_Pay_Multiple_Payments_Logged_Correctly(
             string name, IList<int> dailyHoursWorked1, IList<int> dailyHoursWorked2, IList<int> dailyHoursWorked3, decimal payRate)
         {
-            Employee subject = new(name, payRate);
+            IEmployee subject = EmployeeFactory.GetFactory().CreateEmployee(name, payRate);
             subject.AddHours(dailyHoursWorked1);
             int totalHours1 = dailyHoursWorked1.Sum(t => t);
             decimal pay1 = totalHours1 * payRate;

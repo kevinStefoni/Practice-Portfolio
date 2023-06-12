@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PracticePortfolio.Models;
 using PracticePortfolio.Models.DTOs;
+using PracticePortfolio.Models.Employee_Models;
 
 namespace PracticePortfolio.Controllers
 {
@@ -21,7 +22,8 @@ namespace PracticePortfolio.Controllers
 
         public IActionResult WrapMethodDemo(string name, decimal payRate, params IList<int>[] dailyHoursWorked)
         {
-            Employee employee = new(name, payRate);
+            IEmployee employee = EmployeeFactory.GetFactory().CreateEmployee(name, payRate);
+
             foreach (IList<int> hours in dailyHoursWorked)
             {
                 employee.AddHours(hours);

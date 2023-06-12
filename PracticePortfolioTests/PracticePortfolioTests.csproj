@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EmployeeLibrary\EmployeeLibrary.csproj" />
     <ProjectReference Include="..\PracticePortfolio\PracticePortfolio.csproj" />
   </ItemGroup>
 

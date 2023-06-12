@@ -5,10 +5,12 @@ VisualStudioVersion = 17.6.33712.159
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PracticePortfolio", "PracticePortfolio\PracticePortfolio.csproj", "{0AA2E783-1DEF-4FE3-B32E-EB530026C21B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticePortfolioTests", "PracticePortfolioTests\PracticePortfolioTests.csproj", "{42B3562D-69B3-41BF-B21A-B0A86F18FA49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PracticePortfolioTests", "PracticePortfolioTests\PracticePortfolioTests.csproj", "{42B3562D-69B3-41BF-B21A-B0A86F18FA49}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0AA2E783-1DEF-4FE3-B32E-EB530026C21B} = {0AA2E783-1DEF-4FE3-B32E-EB530026C21B}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeLibrary", "EmployeeLibrary\EmployeeLibrary.csproj", "{D10FDD6F-DBDD-4D23-966C-1399751A9EC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +26,10 @@ Global
 		{42B3562D-69B3-41BF-B21A-B0A86F18FA49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42B3562D-69B3-41BF-B21A-B0A86F18FA49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42B3562D-69B3-41BF-B21A-B0A86F18FA49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D10FDD6F-DBDD-4D23-966C-1399751A9EC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D10FDD6F-DBDD-4D23-966C-1399751A9EC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D10FDD6F-DBDD-4D23-966C-1399751A9EC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D10FDD6F-DBDD-4D23-966C-1399751A9EC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

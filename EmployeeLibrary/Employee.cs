@@ -9,8 +9,7 @@
 
         public IList<string> PaymentLogger { get; set; } = new List<string>();
 
-
-        public Employee(string name, decimal payRate)
+        internal Employee(string name, decimal payRate)
         {
             Name = name;
             _payRate = payRate;
