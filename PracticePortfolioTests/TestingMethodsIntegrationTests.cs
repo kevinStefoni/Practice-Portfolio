@@ -10,23 +10,23 @@ namespace PracticePortfolioTests
     [TestClass]
     public class TestingMethodsIntegrationTests
     {
-        public static IEnumerable<object[]> TestingData()
+        public static IEnumerable<object[]> EmployeeWithMultipleSetsOfHours()
         {
 
             yield return new object[]
             {
                 "John Doe",
+                13.00M,
                 new List<int>() { 0, 8, 6, 10, 0, 0 },
                 new List<int>() { 0, 8, 8, 8, 8, 8, 0 },
-                new List<int>() { 0, 8, 12, 8, 10, 8, 0 },
-                13.00M
+                new List<int>() { 0, 8, 12, 8, 10, 8, 0 }
             };
         }
 
         [TestMethod]
-        [DynamicData(nameof(TestingData), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(EmployeeWithMultipleSetsOfHours), DynamicDataSourceType.Method)]
         public void Test_Pay_Multiple_Payments_Logged_Correctly(
-            string name, IList<int> dailyHoursWorked1, IList<int> dailyHoursWorked2, IList<int> dailyHoursWorked3, decimal payRate)
+            string name, decimal payRate, IList<int> dailyHoursWorked1, IList<int> dailyHoursWorked2, IList<int> dailyHoursWorked3)
         {
             IEmployee subject = EmployeeFactory.GetFactory().CreateEmployee(name, payRate);
             subject.AddHours(dailyHoursWorked1);
@@ -57,9 +57,9 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(TestingData), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(EmployeeWithMultipleSetsOfHours), DynamicDataSourceType.Method)]
         public void Test_WrapMethodDemo_Returns_Correct_Amount(
-            string name, IList<int> dailyHoursWorked1, IList<int> dailyHoursWorked2, IList<int> dailyHoursWorked3, decimal payRate)
+            string name, decimal payRate, IList<int> dailyHoursWorked1, IList<int> dailyHoursWorked2, IList<int> dailyHoursWorked3)
         {
             TestingMethodsController subject = new();
             IList<int>[] hoursWorkedTotalList = new IList<int>[] { dailyHoursWorked1, dailyHoursWorked2, dailyHoursWorked3 };

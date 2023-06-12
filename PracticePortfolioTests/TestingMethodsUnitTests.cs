@@ -31,6 +31,19 @@ namespace PracticePortfolioTests
             };
         }
 
+        public static IEnumerable<object[]> MultipleSetsOfHours()
+        {
+            yield return new object[]
+            {
+                new IList<int>[]
+                {
+                    new List<int>() { 0, 8, 6, 10, 0, 0 },
+                    new List<int>() { 0, 8, 8, 8, 8, 8, 0 },
+                    new List<int>() { 0, 8, 12, 8, 10, 8, 0 },
+                }
+            };
+        }
+
         [TestMethod]
         [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
         public void Test_Pay_No_Hours_Worked_Returns_0(string name, decimal payRate)
@@ -114,7 +127,7 @@ namespace PracticePortfolioTests
 
             subject.AddHours(hoursWorkedLastWeek1);
             subject.AddHours(hoursWorkedLastWeek2);
-            IList<int> payments = Privateer.GetHoursWorked(subject);
+            IList<int> payments = Privateer.GetHoursWorkedEmployee(subject);
 
             payments.Should().BeEquivalentTo(expectedHoursWorked);
         }
@@ -160,11 +173,11 @@ namespace PracticePortfolioTests
         [TestMethod]
         public void Test_EmployeeFactory_When_Empty_Name_Provided_Returns_NullEmployee()
         {
-            EmployeeFactory employeeFactory = EmployeeFactory.GetFactory();
+            EmployeeFactory subject = EmployeeFactory.GetFactory();
             string name = string.Empty;
             decimal payRate = 65.52M;
 
-            IEmployee employee = employeeFactory.CreateEmployee(name, payRate);
+            IEmployee employee = subject.CreateEmployee(name, payRate);
             decimal actualPayRate = Privateer.GetPayRateNullEmployee(employee);
 
             employee.Should().BeOfType<NullEmployee>();
@@ -172,12 +185,88 @@ namespace PracticePortfolioTests
             actualPayRate.Should().Be(0.00M);
         }
 
+        [TestMethod]
+        [DynamicData(nameof(MultipleSetsOfHours), DynamicDataSourceType.Method)]
+        public void Test_NullEmployee_AddHours(IList<int>[] totalHoursWorked)
+        {
+            EmployeeFactory employeeFactory = EmployeeFactory.GetFactory();
+            string name = string.Empty;
+            decimal payRate = 65.52M;
+            IEmployee subject = employeeFactory.CreateEmployee(name, payRate);
+
+            decimal actualPayRate = Privateer.GetPayRateNullEmployee(subject);
+            foreach (IList<int> setOfHours in totalHoursWorked)
+            {
+                subject.AddHours(setOfHours);
+            }
+            IList<int> actualHoursWorked = Privateer.GetHoursWorkedNullEmployee(subject);
+
+            subject.Name.Should().BeEmpty();
+            actualPayRate.Should().Be(0.00M);
+            actualHoursWorked.Should().BeEmpty();
+
+        }
+
+        [TestMethod]
+        public void Test_NullEmployee_CalculatePay_Returns_0()
+        {
+            EmployeeFactory employeeFactory = EmployeeFactory.GetFactory();
+            string name = string.Empty;
+            decimal payRate = 65.52M;
+            IEmployee subject = employeeFactory.CreateEmployee(name, payRate);
+            decimal expectedPay = 0.00M;
+
+
+            decimal actualPay = subject.CalculatePay();
+
+            actualPay.Should().Be(expectedPay);
+        }
+
+        [TestMethod]
+        public void Test_NullEmployee_LogPayment_Does_Nothing()
+        {
+            EmployeeFactory employeeFactory = EmployeeFactory.GetFactory();
+            string name = string.Empty;
+            decimal payRate = 65.52M;
+            IEmployee subject = employeeFactory.CreateEmployee(name, payRate);
+            decimal pay = 0.00M;
+
+            subject.LogPayment(pay);
+            IList<int> actualHoursWorked = Privateer.GetHoursWorkedNullEmployee(subject);
+
+            actualHoursWorked.Should().BeEmpty();
+            
+        }
+
+        [TestMethod]
+        public void Test_NullEmployee_Pay_Returns_0_And_Does_Not_Add_Log()
+        {
+            EmployeeFactory employeeFactory = EmployeeFactory.GetFactory();
+            string name = string.Empty;
+            decimal payRate = 65.52M;
+            IEmployee subject = employeeFactory.CreateEmployee(name, payRate);
+            decimal expectedPay = 0.00M;
+
+            decimal actualPay = subject.Pay();
+            IList<int> actualHoursWorked = Privateer.GetHoursWorkedNullEmployee(subject);
+
+            actualHoursWorked.Should().BeEmpty();
+            actualPay.Should().Be(expectedPay);
+
+        }
+
 
         public class Privateer
         {
-            public static List<int> GetHoursWorked(IEmployee employee)
+            public static List<int> GetHoursWorkedEmployee(IEmployee employee)
             {
                 var fieldInfo = typeof(Employee).GetField("_hoursWorked", BindingFlags.NonPublic | BindingFlags.Instance);
+                return (List<int>)(fieldInfo?.GetValue(employee) ?? new List<int>());
+            }
+
+            public static List<int> GetHoursWorkedNullEmployee(IEmployee employee)
+            {
+                var fieldInfo = typeof(NullEmployee).GetField("_hoursWorked", BindingFlags.NonPublic | BindingFlags.Instance);
                 return (List<int>)(fieldInfo?.GetValue(employee) ?? new List<int>());
             }
 

@@ -3,6 +3,7 @@
     public class NullEmployee : IEmployee
     {
         private readonly decimal _payRate = 0.00M;
+        private IList<int> _hoursWorked = new List<int>();
 
         public string Name { get; set; } = string.Empty;
         public IList<string> PaymentLogger { get; set; } = new List<string>();
@@ -14,10 +15,7 @@
             
         }
 
-        public decimal CalculatePay()
-        {
-            return 0.00M;
-        }
+        public decimal CalculatePay() => 0.00M;
 
         public void LogPayment(decimal amountToPay)
         {

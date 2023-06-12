@@ -20,7 +20,7 @@ namespace PracticePortfolio.Controllers
             return WrapMethodDemo(name, payRate, dailyHoursWorked);
         }
 
-        public IActionResult WrapMethodDemo(string name, decimal payRate, params IList<int>[] dailyHoursWorked)
+        public IActionResult WrapMethodDemo(string name, decimal payRate, IList<int>[] dailyHoursWorked)
         {
             IEmployee employee = EmployeeFactory.GetFactory().CreateEmployee(name, payRate);
 
