@@ -2,9 +2,9 @@
 using ApprovalTests.Reporters;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PracticePortfolio.Models;
-using PracticePortfolio.Models.Employee_Models;
+using EmployeeLibrary;
 using System.Reflection;
+using EmployeeLibrary.EmployeeTypes;
 
 namespace PracticePortfolioTests
 {
@@ -12,6 +12,8 @@ namespace PracticePortfolioTests
     [UseReporter(typeof(DiffReporter))]
     public class TestingMethodsUnitTests
     {
+        private static readonly TalentAcquisitionCoordinator _talentAcquisitionCoordinator = TalentAcquisitionCoordinator.AssignTalentAcquisitionSpecialist();
+
         public static IEnumerable<object[]> EmployeeTestData()
         {
             yield return new object[] { "John Doe", 15.25M };
@@ -23,10 +25,10 @@ namespace PracticePortfolioTests
             {
                 new IEmployee[]
                 {
-                    EmployeeFactory.GetFactory().CreateEmployee("John Doe", 15.25M),
-                    EmployeeFactory.GetFactory().CreateEmployee("Jane Smith", 20.50M),
-                    EmployeeFactory.GetFactory().CreateEmployee("Nicolas Garcia", 19.25M),
-                    EmployeeFactory.GetFactory().CreateEmployee("Gracie Smith", 17.25M)
+                    _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(),"John Doe", 15.25M),
+                    _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(), "Jane Smith", 20.50M),
+                    _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(), "Nicolas Garcia", 19.25M),
+                    _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(), "Gracie Smith", 17.25M)
                 }
             };
         }
@@ -44,11 +46,21 @@ namespace PracticePortfolioTests
             };
         }
 
+        [TestInitialize]
+        public void TestInitialize()
+        {
+
+            _talentAcquisitionCoordinator.RegisterEmploymentType(new EmployeeType());
+            _talentAcquisitionCoordinator.RegisterEmploymentType(new NullEmployeeType());
+            _talentAcquisitionCoordinator.RegisterEmploymentType(new TestEmployeeType());
+
+        }
+
         [TestMethod]
         [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
         public void Test_Pay_No_Hours_Worked_Returns_0(string name, decimal payRate)
         {
-            IEmployee subject = EmployeeFactory.GetFactory().CreateEmployee(name, payRate);
+            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(), name, payRate);
 
             decimal pay = subject.CalculatePay();
 
@@ -60,7 +72,7 @@ namespace PracticePortfolioTests
         public void Test_Pay_1_Hour_Worked_In_One_Day_Returns_Pay_Rate(string name, decimal payRate)
         {
             IList<int> dailyHoursWorked = new List<int>() { 1 };
-            IEmployee subject = EmployeeFactory.GetFactory().CreateEmployee(name, payRate);
+            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(), name, payRate);
             subject.AddHours(dailyHoursWorked);
             decimal expectedPay = payRate;
 
@@ -75,7 +87,7 @@ namespace PracticePortfolioTests
         {
             int hoursInOneDay = 5;
             IList<int> dailyHoursWorked = new List<int>() { hoursInOneDay };
-            IEmployee subject = EmployeeFactory.GetFactory().CreateEmployee(name, payRate);
+            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(), name, payRate);
             subject.AddHours(dailyHoursWorked);
             decimal expectedPay = hoursInOneDay * payRate;
 
@@ -89,7 +101,7 @@ namespace PracticePortfolioTests
         public void Test_Pay_Hours_Worked_In_Multiple_Days_Returns_Correct_Pay(string name, decimal payRate)
         {
             IList<int> dailyHoursWorked = new List<int>() { 8, 8, 7, 8, 0 };
-            IEmployee subject = EmployeeFactory.GetFactory().CreateEmployee(name, payRate);
+            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(), name, payRate);
             subject.AddHours(dailyHoursWorked);
             int totalHours = dailyHoursWorked.Sum(t => t);
             decimal expectedPay = totalHours * payRate;
@@ -104,7 +116,7 @@ namespace PracticePortfolioTests
         public void Test_Log_Payment_Returns_Payment_Confirmation_Statement_With_Correct_Amount(string name, decimal payRate)
         {
             IList<int> dailyHoursWorked = new List<int>() { 8, 8, 7, 8, 0 };
-            IEmployee subject = EmployeeFactory.GetFactory().CreateEmployee(name, payRate);
+            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(), name, payRate);
             subject.AddHours(dailyHoursWorked);
             int totalHours = dailyHoursWorked.Sum(t => t);
             decimal pay = totalHours * payRate;
@@ -123,7 +135,7 @@ namespace PracticePortfolioTests
             IList<int> hoursWorkedLastWeek1 = new List<int>() { 0, 8, 8, 7, 4, 8, 0 };
             IList<int> hoursWorkedLastWeek2 = new List<int>() { 0, 8, 5, 7, 10, 8, 0 };
             IList<int> expectedHoursWorked = hoursWorkedLastWeek1.Concat(hoursWorkedLastWeek2).ToList();
-            IEmployee subject = EmployeeFactory.GetFactory().CreateEmployee(name, payRate);
+            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(), name, payRate);
 
             subject.AddHours(hoursWorkedLastWeek1);
             subject.AddHours(hoursWorkedLastWeek2);
@@ -151,18 +163,18 @@ namespace PracticePortfolioTests
         [TestMethod]
         public void Test_EmployeeFactory_Returns_ConcreteEmployeeFactory()
         {
-            EmployeeFactory subject = EmployeeFactory.GetFactory();
+            TalentAcquisitionCoordinator subject = _talentAcquisitionCoordinator;
 
-            subject.Should().BeOfType<ConcreteEmployeeFactory>();
+            subject.Should().BeOfType<TalentAcquisitionSpecialist>();
         }
 
         [TestMethod]
         [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
         public void Test_EmployeeFactory_When_Name_Provided_Returns_Employee(string name, decimal payRate)
         {
-            EmployeeFactory employeeFactory = EmployeeFactory.GetFactory();
+            TalentAcquisitionCoordinator employeeFactory = _talentAcquisitionCoordinator;
 
-            IEmployee employee = employeeFactory.CreateEmployee(name, payRate);
+            IEmployee employee = employeeFactory.CreateEmployee(new EmployeeType(), name, payRate);
             decimal actualPayRate = Privateer.GetPayRateEmployee(employee);
             
             employee.Should().BeOfType<Employee>();
@@ -173,11 +185,11 @@ namespace PracticePortfolioTests
         [TestMethod]
         public void Test_EmployeeFactory_When_Empty_Name_Provided_Returns_NullEmployee()
         {
-            EmployeeFactory subject = EmployeeFactory.GetFactory();
+            TalentAcquisitionCoordinator subject = _talentAcquisitionCoordinator;
             string name = string.Empty;
             decimal payRate = 65.52M;
 
-            IEmployee employee = subject.CreateEmployee(name, payRate);
+            IEmployee employee = subject.CreateEmployee(new NullEmployeeType(), name, payRate);
             decimal actualPayRate = Privateer.GetPayRateNullEmployee(employee);
 
             employee.Should().BeOfType<NullEmployee>();
@@ -189,10 +201,10 @@ namespace PracticePortfolioTests
         [DynamicData(nameof(MultipleSetsOfHours), DynamicDataSourceType.Method)]
         public void Test_NullEmployee_AddHours(IList<int>[] totalHoursWorked)
         {
-            EmployeeFactory employeeFactory = EmployeeFactory.GetFactory();
+            TalentAcquisitionCoordinator employeeFactory = _talentAcquisitionCoordinator;
             string name = string.Empty;
             decimal payRate = 65.52M;
-            IEmployee subject = employeeFactory.CreateEmployee(name, payRate);
+            IEmployee subject = employeeFactory.CreateEmployee(new NullEmployeeType(), name, payRate);
 
             decimal actualPayRate = Privateer.GetPayRateNullEmployee(subject);
             foreach (IList<int> setOfHours in totalHoursWorked)
@@ -210,10 +222,10 @@ namespace PracticePortfolioTests
         [TestMethod]
         public void Test_NullEmployee_CalculatePay_Returns_0()
         {
-            EmployeeFactory employeeFactory = EmployeeFactory.GetFactory();
+            TalentAcquisitionCoordinator employeeFactory = _talentAcquisitionCoordinator;
             string name = string.Empty;
             decimal payRate = 65.52M;
-            IEmployee subject = employeeFactory.CreateEmployee(name, payRate);
+            IEmployee subject = employeeFactory.CreateEmployee(new NullEmployeeType(), name, payRate);
             decimal expectedPay = 0.00M;
 
 
@@ -225,10 +237,10 @@ namespace PracticePortfolioTests
         [TestMethod]
         public void Test_NullEmployee_LogPayment_Does_Nothing()
         {
-            EmployeeFactory employeeFactory = EmployeeFactory.GetFactory();
+            TalentAcquisitionCoordinator employeeFactory = _talentAcquisitionCoordinator;
             string name = string.Empty;
             decimal payRate = 65.52M;
-            IEmployee subject = employeeFactory.CreateEmployee(name, payRate);
+            IEmployee subject = employeeFactory.CreateEmployee(new NullEmployeeType(), name, payRate);
             decimal pay = 0.00M;
 
             subject.LogPayment(pay);
@@ -241,10 +253,10 @@ namespace PracticePortfolioTests
         [TestMethod]
         public void Test_NullEmployee_Pay_Returns_0_And_Does_Not_Add_Log()
         {
-            EmployeeFactory employeeFactory = EmployeeFactory.GetFactory();
+            TalentAcquisitionCoordinator employeeFactory = _talentAcquisitionCoordinator;
             string name = string.Empty;
             decimal payRate = 65.52M;
-            IEmployee subject = employeeFactory.CreateEmployee(name, payRate);
+            IEmployee subject = employeeFactory.CreateEmployee(new NullEmployeeType(), name, payRate);
             decimal expectedPay = 0.00M;
 
             decimal actualPay = subject.Pay();
@@ -260,25 +272,25 @@ namespace PracticePortfolioTests
         {
             public static List<int> GetHoursWorkedEmployee(IEmployee employee)
             {
-                var fieldInfo = typeof(Employee).GetField("_hoursWorked", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo? fieldInfo = typeof(Employee).GetField("_hoursWorked", BindingFlags.NonPublic | BindingFlags.Instance);
                 return (List<int>)(fieldInfo?.GetValue(employee) ?? new List<int>());
             }
 
             public static List<int> GetHoursWorkedNullEmployee(IEmployee employee)
             {
-                var fieldInfo = typeof(NullEmployee).GetField("_hoursWorked", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo? fieldInfo = typeof(NullEmployee).GetField("_hoursWorked", BindingFlags.NonPublic | BindingFlags.Instance);
                 return (List<int>)(fieldInfo?.GetValue(employee) ?? new List<int>());
             }
 
             public static decimal GetPayRateEmployee(IEmployee employee)
             {
-                var fieldInfo = typeof(Employee).GetField("_payRate", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo? fieldInfo = typeof(Employee).GetField("_payRate", BindingFlags.NonPublic | BindingFlags.Instance);
                 return (decimal) (fieldInfo?.GetValue(employee) ?? 0.00M);
             }
 
             public static decimal GetPayRateNullEmployee(IEmployee employee)
             {
-                var fieldInfo = typeof(NullEmployee).GetField("_payRate", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo? fieldInfo = typeof(NullEmployee).GetField("_payRate", BindingFlags.NonPublic | BindingFlags.Instance);
                 return (decimal)(fieldInfo?.GetValue(employee) ?? 0.00M);
             }
 

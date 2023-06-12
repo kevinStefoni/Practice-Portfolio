@@ -1,4 +1,4 @@
-﻿namespace PracticePortfolio.Models
+﻿namespace EmployeeLibrary
 {
     public interface IEmployee
     {

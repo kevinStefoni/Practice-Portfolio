@@ -1,4 +1,4 @@
-﻿namespace PracticePortfolio.Models.Employee_Models
+﻿namespace EmployeeLibrary
 {
     public class NullEmployee : IEmployee
     {

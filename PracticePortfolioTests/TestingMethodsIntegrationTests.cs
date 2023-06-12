@@ -1,15 +1,18 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PracticePortfolio.Models;
 using PracticePortfolio.Controllers;
 using Microsoft.AspNetCore.Mvc;
-using PracticePortfolio.Models.Employee_Models;
+using EmployeeLibrary;
+using EmployeeLibrary.EmployeeTypes;
 
 namespace PracticePortfolioTests
 {
     [TestClass]
     public class TestingMethodsIntegrationTests
     {
+
+        private static readonly TalentAcquisitionCoordinator _talentAcquisitionCoordinator = TalentAcquisitionCoordinator.AssignTalentAcquisitionSpecialist();
+
         public static IEnumerable<object[]> EmployeeWithMultipleSetsOfHours()
         {
 
@@ -26,12 +29,20 @@ namespace PracticePortfolioTests
             };
         }
 
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            _talentAcquisitionCoordinator.RegisterEmploymentType(new EmployeeType());
+            _talentAcquisitionCoordinator.RegisterEmploymentType(new NullEmployeeType());
+            _talentAcquisitionCoordinator.RegisterEmploymentType(new TestEmployeeType());
+        }
+
         [TestMethod]
         [DynamicData(nameof(EmployeeWithMultipleSetsOfHours), DynamicDataSourceType.Method)]
         public void Test_Pay_Multiple_Payments_Logged_Correctly(
             string name, decimal payRate, IList<int>[] totalHoursWorked)
         {
-            IEmployee subject = EmployeeFactory.GetFactory().CreateEmployee(name, payRate);
+            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(), name, payRate);
             IList<string> expectedPaymentStatements = new List<string>();
 
             foreach(IList<int> hoursWorked in totalHoursWorked)
