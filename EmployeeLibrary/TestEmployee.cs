@@ -7,7 +7,6 @@
         }
 
         public IList<int> HoursWorked { 
-            get { return _hoursWorked; } 
             set { _hoursWorked = value; } 
         }
 

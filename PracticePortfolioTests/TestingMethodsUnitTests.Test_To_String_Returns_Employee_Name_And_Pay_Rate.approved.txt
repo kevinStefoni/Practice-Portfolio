@@ -1,4 +1,4 @@
-﻿John Doe earns $15.25/hr.
-Jane Smith earns $20.50/hr.
-Nicolas Garcia earns $19.25/hr.
-Gracie Smith earns $17.25/hr.
+﻿Employee_Statement[0] = John Doe earns $15.25/hr.
+Employee_Statement[1] = Jane Smith earns $20.50/hr.
+Employee_Statement[2] = Nicolas Garcia earns $19.25/hr.
+Employee_Statement[3] = Gracie Smith earns $17.25/hr.

@@ -13,5 +13,6 @@
         decimal Pay();
 
         void LogPayment(decimal amountToPay);
+
     }
 }
