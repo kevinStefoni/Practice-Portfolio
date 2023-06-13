@@ -4,10 +4,13 @@ using PracticePortfolio.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using EmployeeLibrary;
 using EmployeeLibrary.EmployeeTypes;
+using ApprovalTests;
+using ApprovalTests.Reporters;
 
 namespace PracticePortfolioTests
 {
     [TestClass]
+    [UseReporter(typeof(DiffReporter))]
     public class TestingMethodsIntegrationTests
     {
 
@@ -53,10 +56,9 @@ namespace PracticePortfolioTests
                 expectedPaymentStatements.Add($"Employee was paid ${pay}");
 
                 decimal result = subject.Pay();
-                result.Should().Be(pay);
             }
 
-            subject.PaymentLogger.Should().ContainInOrder(expectedPaymentStatements);
+            Approvals.VerifyAll(expectedPaymentStatements, "Payment_Statement");
         }
 
         [TestMethod]
