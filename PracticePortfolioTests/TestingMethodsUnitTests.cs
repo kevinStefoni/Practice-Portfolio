@@ -16,56 +16,8 @@ namespace PracticePortfolioTests
     {
         private static readonly TalentAcquisitionCoordinator _talentAcquisitionCoordinator = TalentAcquisitionCoordinator.AssignTalentAcquisitionSpecialist();
 
-        public static IEnumerable<object[]> EmployeeTestData()
-        {
-            yield return new object[] { "John Doe", 15.25M };
-        }
-
-        public static IEnumerable<object[]> MultipleEmployeesTestData()
-        {
-            yield return new object[]
-            {
-                new IEmployee[]
-                {
-                    _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(),"John Doe", 15.25M),
-                    _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(), "Jane Smith", 20.50M),
-                    _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(), "Nicolas Garcia", 19.25M),
-                    _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(), "Gracie Smith", 17.25M)
-                }
-            };
-        }
-
-        public static IEnumerable<object[]> MultipleSetsOfHours()
-        {
-            yield return new object[]
-            {
-                new IList<int>[]
-                {
-                    new List<int>() { 0, 8, 6, 10, 0, 0 },
-                    new List<int>() { 0, 8, 8, 8, 8, 8, 0 },
-                    new List<int>() { 0, 8, 12, 8, 10, 8, 0 },
-                }
-            };
-        }
-
-        public static IEnumerable<object[]> EmployeeWithMultipleSetsOfHours()
-        {
-
-            yield return new object[]
-            {
-                "John Doe",
-                13.00M,
-                new IList<int>[]
-                {
-                    new List<int>() { 0, 8, 6, 10, 0, 0 },
-                    new List<int>() { 0, 8, 8, 8, 8, 8, 0 },
-                    new List<int>() { 0, 8, 12, 8, 10, 8, 0 },
-                }
-            };
-        }
-
         [TestMethod]
-        [DynamicData(nameof(MultipleSetsOfHours), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(TestDataSmith.MultipleSetsOfHours), typeof(TestDataSmith), DynamicDataSourceType.Method)]
         public void Test_Schedule_Sentry_Add_Multiple_Weeks_Of_Hours(IList<int>[] totalHoursWorkedList)
         {
             IScheduleSentry subject = new ScheduleSentry();
@@ -86,7 +38,7 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(MultipleSetsOfHours), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(TestDataSmith.MultipleSetsOfHours), typeof(TestDataSmith), DynamicDataSourceType.Method)]
         public void Test_Schedule_Sentry_Clear_Hours(IList<int>[] totalHoursWorkedList)
         {
             IList<int> hoursWorkedList = totalHoursWorkedList.SelectMany(t => t).ToList();
@@ -101,7 +53,7 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(TestDataSmith.EmployeeData), typeof(TestDataSmith), DynamicDataSourceType.Method)]
         public void Test_Pay_No_Hours_Worked_Returns_0(string name, decimal payRate)
         {
             IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(), name, payRate);
@@ -112,7 +64,7 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(TestDataSmith.EmployeeData), typeof(TestDataSmith), DynamicDataSourceType.Method)]
         public void Test_Pay_1_Hour_Worked_In_One_Day_Returns_Pay_Rate(string name, decimal payRate)
         {
             IList<int> hoursWorkedList = new List<int>() { 1 };
@@ -126,7 +78,7 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(TestDataSmith.EmployeeData), typeof(TestDataSmith), DynamicDataSourceType.Method)]
         public void Test_Pay_Hours_Worked_In_Multiple_Days_Returns_Correct_Pay(string name, decimal payRate)
         {
             IList<int> hoursWorkedList = new List<int>() { 8, 8, 7, 8, 0 };
@@ -142,7 +94,7 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(TestDataSmith.EmployeeData), typeof(TestDataSmith), DynamicDataSourceType.Method)]
         public void Test_Calculate_Pay_Clears_Hours_Worked(string name, decimal payRate)
         {
             IList<int> hoursWorkedList = new List<int>() { 8, 8, 7, 8, 0 };
@@ -155,7 +107,7 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(TestDataSmith.EmployeeData), typeof(TestDataSmith), DynamicDataSourceType.Method)]
         public void Test_Log_Payment_Returns_Payment_Confirmation_Statement_With_Correct_Amount(string name, decimal payRate)
         {
             IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(), name, payRate);
@@ -171,7 +123,7 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(MultipleEmployeesTestData), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(TestDataSmith.MultipleEmployeesTestData), typeof(TestDataSmith), DynamicDataSourceType.Method)]
         public void Test_To_String_Returns_Employee_Name_And_Pay_Rate(IEmployee[] employees)
         {
             IEmployee[] subject = employees;
@@ -188,7 +140,7 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(TestDataSmith.EmployeeData), typeof(TestDataSmith), DynamicDataSourceType.Method)]
         public void Test_TalentAcquisitionCoordinator_When_EmployeeType_Provided_Returns_Employee(string name, decimal payRate)
         {
             TalentAcquisitionCoordinator subject = _talentAcquisitionCoordinator;
@@ -217,30 +169,40 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(MultipleSetsOfHours), DynamicDataSourceType.Method)]
-        public void Test_NullEmployee_AddHours(IList<int>[] totalHoursWorked)
+        [DynamicData(nameof(TestDataSmith.EmployeeWithMultipleSetsOfHours), typeof(TestDataSmith), DynamicDataSourceType.Method)]
+        public void Test_NullEmployee_AddHours_Should_Always_Return_Empty(string name, decimal payRate, IList<int>[] totalHoursWorked)
         {
-            string name = string.Empty;
-            decimal payRate = 65.52M;
-            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new NullEmployeeType(), name, payRate);
+            IScheduleSentry nullScheduleSentry = new NullScheduleSentry();
+            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new NullEmployeeType(), name, payRate, nullScheduleSentry);
+            foreach (IList<int> setOfHours in totalHoursWorked)
+            {
+                subject.AddHours(setOfHours);
+            }
+
+            nullScheduleSentry.HoursWorked.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        [DynamicData(nameof(TestDataSmith.EmployeeWithMultipleSetsOfHours), typeof(TestDataSmith), DynamicDataSourceType.Method)]
+        public void Test_NullScheduleSentry_AddHours_Should_Always_Return_Empty(string name, decimal payRate, IList<int>[] totalHoursWorked)
+        {
+            IScheduleSentry subject = new NullScheduleSentry();
 
             foreach (IList<int> setOfHours in totalHoursWorked)
             {
                 subject.AddHours(setOfHours);
             }
-            IList<int> actualHoursWorked = Privateer.GetHoursWorkedNullEmployee(subject);
 
-            actualHoursWorked.Should().BeEmpty();
+            subject.HoursWorked.Should().BeEmpty();
         }
 
         [TestMethod]
-        public void Test_NullEmployee_CalculatePay_Returns_0()
+        [DynamicData(nameof(TestDataSmith.EmployeeWithOneSetOfHours), typeof(TestDataSmith), DynamicDataSourceType.Method)]
+        public void Test_NullEmployee_CalculatePay_Returns_0(string name, decimal payRate, IList<int> hoursWorkedList)
         {
-            string name = string.Empty;
-            decimal payRate = 50.00M;
-            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new NullEmployeeType(), name, payRate);
+            IScheduleSentry mockScheduleSentry = new MockScheduleSentry(hoursWorkedList);
+            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new NullEmployeeType(), name, payRate, mockScheduleSentry);
             decimal expectedPay = 0.00M;
-
 
             decimal actualPay = subject.CalculatePay();
 
@@ -248,30 +210,15 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
-        public void Test_NullEmployee_LogPayment_Does_Nothing(string name, decimal payRate)
+        [DynamicData(nameof(TestDataSmith.EmployeeData), typeof(TestDataSmith), DynamicDataSourceType.Method)]
+        public void Test_NullEmployee_LogPayment_Does_Not_Add_Statement_To_PaymentLogger(string name, decimal payRate)
         {
             IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new NullEmployeeType(), name, payRate);
-            decimal pay = 0.00M;
+            decimal pay = 50.00M;
 
             subject.LogPayment(pay);
 
             subject.PaymentLogger.Should().BeEmpty();
-        }
-
-        [TestMethod]
-        [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
-        public void Test_NullEmployee_Pay_Returns_0_And_Does_Not_Add_Log(string name, decimal payRate)
-        {
-            IScheduleSentry nullScheduleSentry = new NullScheduleSentry();
-            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new NullEmployeeType(), name, payRate, nullScheduleSentry);
-            decimal expectedPay = 0.00M;
-
-            decimal actualPay = subject.Pay();
-            IList<string> actualPaymentStatements = subject.PaymentLogger;
-
-            actualPaymentStatements.Should().BeEmpty();
-            actualPay.Should().Be(expectedPay);
         }
 
 

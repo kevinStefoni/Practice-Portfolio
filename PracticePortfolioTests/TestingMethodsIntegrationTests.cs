@@ -13,27 +13,25 @@ namespace PracticePortfolioTests
     [UseReporter(typeof(DiffReporter))]
     public class TestingMethodsIntegrationTests
     {
-
         private static readonly TalentAcquisitionCoordinator _talentAcquisitionCoordinator = TalentAcquisitionCoordinator.AssignTalentAcquisitionSpecialist();
 
-        public static IEnumerable<object[]> EmployeeWithMultipleSetsOfHours()
+        [TestMethod]
+        [DynamicData(nameof(TestDataSmith.EmployeeData), typeof(TestDataSmith), DynamicDataSourceType.Method)]
+        public void Test_NullEmployee_Pay_Returns_0_And_Does_Not_Add_Log(string name, decimal payRate)
         {
+            IScheduleSentry nullScheduleSentry = new NullScheduleSentry();
+            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new NullEmployeeType(), name, payRate, nullScheduleSentry);
+            decimal expectedPay = 0.00M;
 
-            yield return new object[]
-            {
-                "John Doe",
-                13.00M,
-                new IList<int>[]
-                {
-                    new List<int>() { 0, 8, 6, 10, 0, 0 },
-                    new List<int>() { 0, 8, 8, 8, 8, 8, 0 },
-                    new List<int>() { 0, 8, 12, 8, 10, 8, 0 },
-                }
-            };
+            decimal actualPay = subject.Pay();
+            IList<string> actualPaymentStatements = subject.PaymentLogger;
+
+            actualPaymentStatements.Should().BeEmpty();
+            actualPay.Should().Be(expectedPay);
         }
 
         [TestMethod]
-        [DynamicData(nameof(EmployeeWithMultipleSetsOfHours), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(TestDataSmith.EmployeeWithMultipleSetsOfHours), typeof(TestDataSmith), DynamicDataSourceType.Method)]
         public void Test_Pay_Multiple_Payments_Logged_Correctly(
             string name, decimal payRate, IList<int>[] totalHoursWorked)
         {
@@ -54,7 +52,7 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(EmployeeWithMultipleSetsOfHours), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(TestDataSmith.EmployeeWithMultipleSetsOfHours), typeof(TestDataSmith), DynamicDataSourceType.Method)]
         public void Test_WrapMethodDemo_Returns_Correct_Amount(
             string name, decimal payRate, IList<int>[] totalHoursWorkedList)
         {
