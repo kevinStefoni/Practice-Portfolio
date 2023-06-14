@@ -263,7 +263,8 @@ namespace PracticePortfolioTests
         [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
         public void Test_NullEmployee_Pay_Returns_0_And_Does_Not_Add_Log(string name, decimal payRate)
         {
-            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new NullEmployeeType(), name, payRate);
+            IScheduleSentry nullScheduleSentry = new NullScheduleSentry();
+            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new NullEmployeeType(), name, payRate, nullScheduleSentry);
             decimal expectedPay = 0.00M;
 
             decimal actualPay = subject.Pay();

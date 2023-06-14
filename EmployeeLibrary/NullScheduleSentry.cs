@@ -2,8 +2,6 @@
 {
     public class NullScheduleSentry : IScheduleSentry
     {
-        private readonly IList<int> _hoursWorked = new List<int>();
-
         public void AddHours(IList<int> newHoursWorked)
         {
         }
@@ -12,9 +10,6 @@
         {
         }
 
-        public IList<int> HoursWorked
-        {
-            get { return _hoursWorked; }
-        }
+        public IList<int> HoursWorked { get; } = new List<int>();
     }
 }

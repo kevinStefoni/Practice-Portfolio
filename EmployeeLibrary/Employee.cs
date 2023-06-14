@@ -5,7 +5,7 @@
         private readonly decimal _payRate;
         private readonly IScheduleSentry _scheduleSentry;
 
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; }
         public IList<string> PaymentLogger { get; set; } = new List<string>();
 
         internal Employee(string name, decimal payRate) : this(name, payRate, new ScheduleSentry())

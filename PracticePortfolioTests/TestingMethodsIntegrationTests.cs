@@ -50,7 +50,7 @@ namespace PracticePortfolioTests
                 decimal result = subject.Pay();
             }
 
-            Approvals.VerifyAll(expectedPaymentStatements, "Payment_Statement");
+            Approvals.VerifyAll(subject.PaymentLogger, "Payment_Statement");
         }
 
         [TestMethod]
