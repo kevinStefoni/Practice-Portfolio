@@ -3,33 +3,36 @@
     public class Employee : IEmployee
     {
         private readonly decimal _payRate;
+        private readonly IScheduleSentry _scheduleSentry;
 
-        protected IList<int> _hoursWorked = new List<int>();
-
-        public string Name { get; set; } = string.Empty; 
-
+        public string Name { get; set; } = string.Empty;
         public IList<string> PaymentLogger { get; set; } = new List<string>();
 
-        internal Employee(string name, decimal payRate)
+        internal Employee(string name, decimal payRate) : this(name, payRate, new ScheduleSentry())
+        {
+        }
+
+        internal Employee(string name, decimal payRate, IScheduleSentry scheduleSentry)
         {
             Name = name;
             _payRate = payRate;
+            _scheduleSentry = scheduleSentry;
         }
 
         public void AddHours(IList<int> newHoursWorked)
         {
-            _hoursWorked = _hoursWorked.Concat(newHoursWorked).ToList();
+            _scheduleSentry.AddHours(newHoursWorked);
         }
 
         public decimal CalculatePay()
         {
             decimal pay = 0.00M;
 
-            foreach(int hours in _hoursWorked)
+            foreach(int hours in _scheduleSentry.HoursWorked)
             {
                 pay += hours * _payRate;
             }
-            _hoursWorked.Clear();
+            _scheduleSentry.ClearHours();
 
             return pay;
         }

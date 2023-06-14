@@ -6,5 +6,10 @@
         {
             return new NullEmployee();
         }
+
+        public IEmployee CreateEmployee(string name, decimal payRate, IScheduleSentry scheduleSentry)
+        {
+            return new NullEmployee(scheduleSentry);
+        }
     }
 }

@@ -4,5 +4,7 @@
     {
         IEmployee CreateEmployee(string name, decimal payRate);
 
+        IEmployee CreateEmployee(string name, decimal payRate, IScheduleSentry scheduleSentry);
+
     }
 }
