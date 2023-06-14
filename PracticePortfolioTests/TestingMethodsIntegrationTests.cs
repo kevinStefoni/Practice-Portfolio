@@ -32,14 +32,6 @@ namespace PracticePortfolioTests
             };
         }
 
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            _talentAcquisitionCoordinator.RegisterEmploymentType(new EmployeeType());
-            _talentAcquisitionCoordinator.RegisterEmploymentType(new NullEmployeeType());
-            _talentAcquisitionCoordinator.RegisterEmploymentType(new TestEmployeeType());
-        }
-
         [TestMethod]
         [DynamicData(nameof(EmployeeWithMultipleSetsOfHours), DynamicDataSourceType.Method)]
         public void Test_Pay_Multiple_Payments_Logged_Correctly(

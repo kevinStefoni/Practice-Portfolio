@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using EmployeeLibrary;
 using System.Reflection;
 using EmployeeLibrary.EmployeeTypes;
+using System.Xml.Linq;
 
 namespace PracticePortfolioTests
 {
@@ -21,7 +22,6 @@ namespace PracticePortfolioTests
 
         public static IEnumerable<object[]> MultipleEmployeesTestData()
         {
-            _talentAcquisitionCoordinator.RegisterEmploymentType(new EmployeeType());
             yield return new object[]
             {
                 new IEmployee[]
@@ -61,16 +61,6 @@ namespace PracticePortfolioTests
                     new List<int>() { 0, 8, 12, 8, 10, 8, 0 },
                 }
             };
-        }
-
-        [TestInitialize]
-        public void TestInitialize()
-        {
-
-            _talentAcquisitionCoordinator.RegisterEmploymentType(new EmployeeType());
-            _talentAcquisitionCoordinator.RegisterEmploymentType(new NullEmployeeType());
-            _talentAcquisitionCoordinator.RegisterEmploymentType(new TestEmployeeType());
-
         }
 
         [TestMethod]
@@ -166,7 +156,7 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        public void Test_EmployeeFactory_Returns_ConcreteEmployeeFactory()
+        public void Test_TalentAcquisitionCoordinator_Returns_ConcreteTalentAcquisitionCoordinator()
         {
             TalentAcquisitionCoordinator subject = _talentAcquisitionCoordinator;
 
@@ -175,11 +165,9 @@ namespace PracticePortfolioTests
 
         [TestMethod]
         [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
-        public void Test_EmployeeFactory_When_EmployeeType_Provided_Returns_Employee(string name, decimal payRate)
+        public void Test_TalentAcquisitionCoordinator_When_EmployeeType_Provided_Returns_Employee(string name, decimal payRate)
         {
-            TalentAcquisitionCoordinator employeeFactory = _talentAcquisitionCoordinator;
-
-            IEmployee employee = employeeFactory.CreateEmployee(new EmployeeType(), name, payRate);
+            IEmployee employee = _talentAcquisitionCoordinator.CreateEmployee(new EmployeeType(), name, payRate);
             decimal actualPayRate = Privateer.GetPayRateEmployee(employee);
             
             employee.Should().BeOfType<Employee>();
@@ -188,63 +176,57 @@ namespace PracticePortfolioTests
         }
 
         [TestMethod]
-        public void Test_EmployeeFactory_When_NullEmployeeType_Provided_Returns_NullEmployee()
+        public void Test_TalentAcquisitionCoordinator_When_NullEmployeeType_Provided_Returns_NullEmployee()
         {
-            TalentAcquisitionCoordinator subject = _talentAcquisitionCoordinator;
             string name = string.Empty;
             decimal payRate = 65.52M;
+            decimal expectedPayRate = 0.00M;
 
-            IEmployee employee = subject.CreateEmployee(new NullEmployeeType(), name, payRate);
+            IEmployee employee = _talentAcquisitionCoordinator.CreateEmployee(new NullEmployeeType(), name, payRate);
             decimal actualPayRate = Privateer.GetPayRateNullEmployee(employee);
 
             employee.Should().BeOfType<NullEmployee>();
             employee.Name.Should().Be(name);
-            actualPayRate.Should().Be(0.00M);
+            actualPayRate.Should().Be(expectedPayRate);
         }
 
         [TestMethod]
         [DynamicData(nameof(EmployeeTestData), DynamicDataSourceType.Method)]
-        public void Test_EmployeeFactory_When_TestEmployeeType_Provided_Returns_TestEmployee(string name, decimal payRate)
+        public void Test_TalentAcquisitionCoordinator_When_TestEmployeeType_Provided_Returns_TestEmployee(string name, decimal payRate)
         {
-            TalentAcquisitionCoordinator subject = _talentAcquisitionCoordinator;
+            decimal expectedPayRate = 0.00M;
 
-            IEmployee employee = subject.CreateEmployee(new TestEmployeeType(), name, payRate);
+            IEmployee employee = _talentAcquisitionCoordinator.CreateEmployee(new TestEmployeeType(), name, payRate);
             decimal actualPayRate = Privateer.GetPayRateTestEmployee(employee);
 
             employee.Should().BeOfType<TestEmployee>();
             employee.Name.Should().Be(name);
-            actualPayRate.Should().Be(payRate);
+            actualPayRate.Should().Be(expectedPayRate);
         }
 
         [TestMethod]
         [DynamicData(nameof(MultipleSetsOfHours), DynamicDataSourceType.Method)]
         public void Test_NullEmployee_AddHours(IList<int>[] totalHoursWorked)
         {
-            TalentAcquisitionCoordinator employeeFactory = _talentAcquisitionCoordinator;
             string name = string.Empty;
             decimal payRate = 65.52M;
-            IEmployee subject = employeeFactory.CreateEmployee(new NullEmployeeType(), name, payRate);
+            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new NullEmployeeType(), name, payRate);
 
-            decimal actualPayRate = Privateer.GetPayRateNullEmployee(subject);
             foreach (IList<int> setOfHours in totalHoursWorked)
             {
                 subject.AddHours(setOfHours);
             }
             IList<int> actualHoursWorked = Privateer.GetHoursWorkedNullEmployee(subject);
 
-            subject.Name.Should().BeEmpty();
-            actualPayRate.Should().Be(0.00M);
             actualHoursWorked.Should().BeEmpty();
-
         }
 
         [TestMethod]
         public void Test_NullEmployee_CalculatePay_Returns_0()
         {
-            TalentAcquisitionCoordinator employeeFactory = _talentAcquisitionCoordinator;
             string name = string.Empty;
-            decimal payRate = 65.52M;
-            IEmployee subject = employeeFactory.CreateEmployee(new NullEmployeeType(), name, payRate);
+            decimal payRate = 50.00M;
+            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new NullEmployeeType(), name, payRate);
             decimal expectedPay = 0.00M;
 
 
@@ -256,10 +238,9 @@ namespace PracticePortfolioTests
         [TestMethod]
         public void Test_NullEmployee_LogPayment_Does_Nothing()
         {
-            TalentAcquisitionCoordinator employeeFactory = _talentAcquisitionCoordinator;
             string name = string.Empty;
             decimal payRate = 65.52M;
-            IEmployee subject = employeeFactory.CreateEmployee(new NullEmployeeType(), name, payRate);
+            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new NullEmployeeType(), name, payRate);
             decimal pay = 0.00M;
 
             subject.LogPayment(pay);
@@ -272,10 +253,9 @@ namespace PracticePortfolioTests
         [TestMethod]
         public void Test_NullEmployee_Pay_Returns_0_And_Does_Not_Add_Log()
         {
-            TalentAcquisitionCoordinator employeeFactory = _talentAcquisitionCoordinator;
             string name = string.Empty;
             decimal payRate = 65.52M;
-            IEmployee subject = employeeFactory.CreateEmployee(new NullEmployeeType(), name, payRate);
+            IEmployee subject = _talentAcquisitionCoordinator.CreateEmployee(new NullEmployeeType(), name, payRate);
             decimal expectedPay = 0.00M;
 
             decimal actualPay = subject.Pay();

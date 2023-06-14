@@ -2,7 +2,7 @@
 {
     public class Employee : IEmployee
     {
-        protected readonly decimal _payRate;
+        private readonly decimal _payRate;
 
         protected IList<int> _hoursWorked = new List<int>();
 

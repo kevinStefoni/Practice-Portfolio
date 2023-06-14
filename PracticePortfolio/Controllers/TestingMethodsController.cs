@@ -23,7 +23,6 @@ namespace PracticePortfolio.Controllers
         public IActionResult WrapMethodDemo(string name, decimal payRate, IList<int>[] dailyHoursWorked)
         {
             TalentAcquisitionCoordinator talentAcquisitionSpecialist = TalentAcquisitionCoordinator.AssignTalentAcquisitionSpecialist();
-            talentAcquisitionSpecialist.RegisterEmploymentType(new EmployeeType());
             IEmployee employee = talentAcquisitionSpecialist.CreateEmployee(new EmployeeType(), name, payRate);
 
             foreach (IList<int> hours in dailyHoursWorked)
